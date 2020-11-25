@@ -1,56 +1,81 @@
 {% extends "layout.html" %}
 
+{% block style %}
+    <link href="/static/index.css" rel="stylesheet">
+{% endblock%}
 {% block title %}
     Index
 {% endblock %}
 
 {% block main %}
-<table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Symbol</th>
-                <th>Name</th>
-                <th>Shares</th>
-                <th>Price</th>
-                <th>Total</th>
-            </tr>
-        </thead>
-        <tfoot>
-            <tr>
-                <td colspan="4"></td>
-                <td style="font-weight: bold">{{ holdings }}</td>
-            </tr>
-        </tfoot>
-        <tbody>
-            {% for stock in stocks %}
-                <tr class="w3-hover-blue">
-                    <td>{{ stock.symbol }}</td>
-                    <td>{{ stock.name }}</td>
-                    <td>{{ stock.shares }}</td>
-                    <td>{{ stock.price }}</td>
-                    <td>{{ stock.total }}</td>
-                </tr>
-            {% endfor %}
-                <h1>Stocks Portfolio</h1>
-            <tr class="w3-hover-green">
-                <td colspan="4">CASH</td>
-                <td>{{ cash }}</td>
-            </tr>
-        </tbody>
-    </table>
-    <div class="text-left">
-        <h3 class="text-center">How to use</h3>
-        <p>C$50 Finance is a simple way to evaluate your stock trading performance in a safe environment. Here you can:</p>
-        <ul>
-            <li>Check a stock price via QUOTE</li>
-            <li>Buy real stocks with BUY</li>
-            <li>Sell for profit on SELL</li>
-            <li>Take a look at you trading HISTORY</li>
-            <li>Keep track of your own stock portfolio!</li>
+    <div id="mybets" class="carousel slide" data-ride="carousel">
+        <ul class="carousel-indicators">
+            <li data-target="#mybets" data-slide-to="0" class="active"></li>
+            <li data-target="#mybets" data-slide-to="1"></li>
+            <li data-target="#mybets" data-slide-to="2"></li>
         </ul>
-        <p>For a list of all avaible stocks check:
-            <a class="font-weight-bold" href="https://www.nasdaq.com/market-activity/stocks/screener" target="_blank">NASDAQ Stock Screener</a>
-        </p>
-        <p>If anytime you need more cash or would like to simulate a withdrawal you can do it through your account settings!</p>
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTC1_QG6d3BfeRwo5QyqxkvMOAmfguYtI2WQ&usqp=CAU" alt="Los Angeles" width="1100" height="500">
+                <div class="carousel-caption">
+                    <h3>Cor x San</h3>
+                    <p>R$ 50,00</p>
+                </div>
+            </div>
+            <div class="carousel-item">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTC1_QG6d3BfeRwo5QyqxkvMOAmfguYtI2WQ&usqp=CAU" alt="Chicago" width="1100" height="500">
+                <div class="carousel-caption">
+                    <h3>Fut da Praia</h3>
+                    <p>Coca</p>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTC1_QG6d3BfeRwo5QyqxkvMOAmfguYtI2WQ&usqp=CAU" alt="New York" width="1100" height="500">
+                <div class="carousel-caption">
+                    <h3>Poker Night</h3>
+                    <p>R$ 20,00</p>
+                </div>
+            </div>
+        </div>
+        <a class="carousel-control-prev" href="#mybets" data-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+        </a>
+        <a class="carousel-control-next" href="#mybets" data-slide="next">
+        <span class="carousel-control-next-icon"></span>
+        </a>
     </div>
+    <nav id="feed-bar" class="navbar justify-content-between">
+        <a class="navbar-brand">Feed</a>
+        <form class="form-inline">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </form>
+    </nav>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Card title</h5>
+            <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            <a href="#" class="card-link">Card link</a>
+            <a href="#" class="card-link">Another link</a>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Card title</h5>
+            <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            <a href="#" class="card-link">Card link</a>
+            <a href="#" class="card-link">Another link</a>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Card title</h5>
+            <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            <a href="#" class="card-link">Card link</a>
+            <a href="#" class="card-link">Another link</a>
+        </div>
+    </div>
+
 {% endblock %}
