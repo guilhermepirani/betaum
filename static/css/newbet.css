@@ -1,0 +1,28 @@
+
+label {
+    display: flex;
+    margin-bottom: .25rem;
+    text-align: left;
+}
+
+main .form-control {
+    display: flex;
+    width: 100%;
+
+}
+.input-block {
+    margin-bottom: 1rem;
+}
+
+#invites {
+    margin-top: 1rem;
+}
+
+#checkbox {
+    margin: 1rem;
+}
+.btn-primary {
+    color: #fff;
+    background: #2e944b;
+    border-color: #0d8c19;
+}

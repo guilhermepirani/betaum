@@ -139,6 +139,36 @@ def register():
         return render_template("/register.html")
 
 
+@app.route("/newbet", methods=["GET", "POST"])
+@login_required
+def newbet():
+    """Register new friendly bet"""
+    return render_template("/newbet.html")
+
+
+@app.route("/profile")
+@login_required
+def profile():
+    """User's Profile"""
+    return render_template("/profile.html")
+
+
+@app.route("/mybets")
+@login_required
+def mybets():
+    """User's ongoing bets"""
+    return render_template("/mybets.html")
+
+
+@app.route("/friends")
+@login_required
+def friends():
+    """User's friends"""
+    return render_template("/friends.html")
+
+
+
+
 def errorHandler(e):
     """Handle error"""
     if not isinstance(e, HTTPException):

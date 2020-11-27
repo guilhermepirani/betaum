@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block style %}
-    <link href="/static/index.css" rel="stylesheet">
+    <link href="/static/css/index.css" rel="stylesheet">
 {% endblock%}
 {% block title %}
     Index
@@ -23,14 +23,14 @@
                 </div>
             </div>
             <div class="carousel-item">
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTC1_QG6d3BfeRwo5QyqxkvMOAmfguYtI2WQ&usqp=CAU" alt="Chicago" width="1100" height="500">
+            <img src="https://s2.glbimg.com/T81T-PjBwz2m5SzCqArpvDWp2sw=/0x0:1115x669/984x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2017/A/J/qoWrGYQme4SIEYsssfMA/bets.jpg" alt="Chicago" width="1100" height="500">
                 <div class="carousel-caption">
                     <h3>Fut da Praia</h3>
                     <p>Coca</p>
                 </div>
             </div>
             <div class="carousel-item">
-                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTC1_QG6d3BfeRwo5QyqxkvMOAmfguYtI2WQ&usqp=CAU" alt="New York" width="1100" height="500">
+                <img src="https://arizonasports.com/wp-content/uploads/2020/02/prop-edit.jpg" alt="New York" width="1100" height="500">
                 <div class="carousel-caption">
                     <h3>Poker Night</h3>
                     <p>R$ 20,00</p>
@@ -44,37 +44,48 @@
         <span class="carousel-control-next-icon"></span>
         </a>
     </div>
-    <nav id="feed-bar" class="navbar justify-content-between">
+    <div id="feed-bar">
         <a class="navbar-brand">Feed</a>
-        <form class="form-inline">
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-        </form>
-    </nav>
-    <div class="card">
-        <div class="card-body">
-            <h5 class="card-title">Card title</h5>
-            <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
-            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            <a href="#" class="card-link">Card link</a>
-            <a href="#" class="card-link">Another link</a>
+        <div class="input-group">
+          <input type="text" class="form-control" placeholder="Search">
+          <div class="input-group-append">
+            <button class="btn btn-outline-secondary" type="button">
+                <img src="../static/img/search.svg" alt="Search Icon">
+            </button>
+          </div>
         </div>
     </div>
     <div class="card">
         <div class="card-body">
-            <h5 class="card-title">Card title</h5>
-            <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
-            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            <a href="#" class="card-link">Card link</a>
-            <a href="#" class="card-link">Another link</a>
+            <img id="card-avatar" class="avatar" src="../static/img/user.svg" alt="User Icon">
+            <h4 class="name">  Guilherme Pirani</h4>
+            <h5 class="card-title">Ping Pong dos Amigos</h5>
+            <h6 class="card-subtitle mb-2">Entrada: R$ 2,00 - Prêmiação</h6>
+            <p class="card-text">Dia 5 de Novembro na casa do João</p>
+            <a class="float-left" href="/"><img src="../static/img/eye.svg" alt="Eye Icon"></a>
+            <a class="float-right" href="/"><img src="../static/img/send.svg" alt="Send Icon"></a>
         </div>
     </div>
     <div class="card">
         <div class="card-body">
-            <h5 class="card-title">Card title</h5>
-            <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
-            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            <a href="#" class="card-link">Card link</a>
-            <a href="#" class="card-link">Another link</a>
+            <img id="card-avatar" class="avatar" src="../static/img/user.svg" alt="User Icon">
+            <h4 class="name">  Fernanda Carregã</h4>
+            <h5 class="card-title">Prêmios do BTS</h5>
+            <h6 class="card-subtitle mb-2">Entrada: R$ 5,00 - Vencedor leva tudo</h6>
+            <p class="card-text">Dia 5 de Novembro na casa da Bruna</p>
+            <a class="float-left" href="/"><img src="../static/img/eye.svg" alt="Eye Icon"></a>
+            <a class="float-right" href="/"><img src="../static/img/send.svg" alt="Send Icon"></a>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <img id="card-avatar" class="avatar" src="../static/img/user.svg" alt="User Icon">
+            <h4 class="name">  Guilherme Pirani</h4>
+            <h5 class="card-title">Cor x Santos</h5>
+            <h6 class="card-subtitle mb-2">Entrada: R$ 10,00 - Vencedor leva tudo</h6>
+            <p class="card-text">Dia 5 de Novembro na casa do Guilherme</p>
+            <a class="float-left" href="/"><img src="../static/img/eye.svg" alt="Eye Icon"></a>
+            <a class="float-right" href="/"><img src="../static/img/send.svg" alt="Send Icon"></a>
         </div>
     </div>
 

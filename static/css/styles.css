@@ -1,3 +1,4 @@
+/* Overall theme */
 .dark-mode {
     background: #42413c;
     color: #faf9f5;
@@ -10,6 +11,8 @@
     text-decoration: none;
 }
 
+
+/* Top bar */
 .navbar {
     background: #f8f9fa;
     border-bottom: 1px solid #dee2e6;
@@ -17,30 +20,51 @@
     justify-content: unset;
 }
 
-nav .navbar-brand
+nav .navbar-brand .green
 {
     /* size for brand */
     font-size: xx-large;
+
+    /* color for brand */
+    color: #2e944b;
+    font-family: 'Permanent Marker', cursive;
+    font-size: 3rem;
 }
 
-/* colors for brand */
-nav .navbar-brand .green
-{
-    color: #2e944b;
+
+/* Items in top bar */
+.nav-link {
+    padding: 5px;
 }
 
 #plus {
     margin-left: auto;
 }
 
-.nav-link {
-    padding: 5px;
+.dropdown-menu {
+    background: #333;
+}
+
+.dropdown-item > img {
+    /* Aligning avatar inside notification */
+    margin-right: 0.5rem;
+    margin-bottom: 0.25rem;
+}
+
+.dropdown-item {
+    padding: 0.5rem;
+    max-width: 220px;
+    font-size: clamp(10px, 12px, 14px);
+    color: #eee;
 }
 
 .navbar-toggler {
     margin-left: 1rem;
+    padding: 0;
 }
 
+
+/* Main block universal styles */
 main .form-control
 {
     /* center form controls */
@@ -65,6 +89,5 @@ main img
     max-width: 100%;
 }
 
-.table-striped {
-    text-align: left;
-}
+
+

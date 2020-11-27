@@ -1,0 +1,98 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    New Bet
+{% endblock %}
+
+{% block style %}
+    <link href="/static/css/newbet.css" rel="stylesheet">
+{% endblock%}
+
+{% block main %}
+    <form action="/newbet" class="needs-validation" novalidate method="POST">
+        <label for="bname">Bet title:</label>
+        <div class="form-group">
+            <input type="text" class="form-control" id="bname" placeholder="Title text" name="bname" required>
+            <div class="valid-feedback">Valid.</div>
+            <div class="invalid-feedback">Please fill out this field.</div>
+        </div>
+        <label for="entry">Required of each participant:</label>
+        <div class="form-group">
+            <input type="text" class="form-control" id="entry" placeholder="$5,00 fee" name="entry" required>
+            <div class="valid-feedback">Valid.</div>
+            <div class="invalid-feedback">Please fill out this field.</div>
+        </div>
+        <label for="date">Date:</label>
+        <div class="form-group">
+            <input type="text" class="form-control" id="date" placeholder="dd/mm/yyyy" name="date">
+        </div>
+        <div class="form-group">
+            <label for="place">Address:</label>
+            <input type="text" class="form-control" id="place" placeholder="To participate or collect prize" name="place">
+        </div>
+        <label for="about">About:</label>
+        <div class="input-block">
+            <textarea class="form-control" id="about" name="about" placeholder="Feel free to describe whatever you want to."></textarea>
+        </div>
+        <label>Prize format:</label>
+        <div class="form-check">
+            <label class="form-check-label">
+                <input type="radio" class="form-check-input" name="optradio">Winner takes all
+            </label>
+        </div>
+        <div class="form-check">
+            <label class="form-check-label">
+                <input type="radio" class="form-check-input" name="optradio">Shared prize
+            </label>
+        </div>
+        <label id="invites">Invite:</label>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text">@</span>
+            </div>
+            <input type="text" class="form-control" placeholder="Username">
+        </div>
+        <label>Add image (Optional):</label>
+        <div class="custom-file">
+            <input type="file" class="custom-file-input" id="customFile">
+            <label class="custom-file-label" for="customFile">Choose file</label>
+        </div>
+        <div class="form-group form-check">
+            <label id="checkbox" class="form-check-label">
+                <input class="form-check-input" type="checkbox" name="remember" required> I agree to the terms of use.
+                <div class="valid-feedback">Valid.</div>
+                <div class="invalid-feedback">Check this checkbox to continue.</div>
+            </label>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Create Bet</button>
+    </form>
+
+<script>
+// Disable form submissions if there are invalid fields
+(function() {
+  'use strict';
+  window.addEventListener('load', function() {
+    // Get the forms we want to add validation styles to
+    var forms = document.getElementsByClassName('needs-validation');
+    // Loop over them and prevent submission
+    var validation = Array.prototype.filter.call(forms, function(form) {
+      form.addEventListener('submit', function(event) {
+        if (form.checkValidity() === false) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        form.classList.add('was-validated');
+      }, false);
+    });
+  }, false);
+})();
+
+// Add the following code if you want the name of the file appear on select
+$(".custom-file-input").on("change", function() {
+  var fileName = $(this).val().split("\\").pop();
+  $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+});
+</script>
+
+{% endblock %}
