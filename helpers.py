@@ -2,8 +2,10 @@ import os
 import requests
 import urllib.parse
 
-from flask import redirect, render_template, session
+from flask import redirect, render_template, session, request
 from functools import wraps
+
+from werkzeug.utils import secure_filename
 
 
 def apology(message, code=400):

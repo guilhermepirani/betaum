@@ -7,6 +7,7 @@ label {
 
 main .form-control {
     display: flex;
+    flex: 1;
     width: 100%;
 
 }
@@ -14,9 +15,42 @@ main .form-control {
     margin-bottom: 1rem;
 }
 
+label span {
+    margin: auto;
+    font-size: 12px;
+    color: #8fa7b3;
+    margin-left: 2rem;
+}
+
 #invites {
     margin-top: 1rem;
 }
+
+span > img {
+    position: absolute;
+    z-index: 10;
+    padding: 0.75rem;
+    right: 1%;
+}
+
+.mb-3, .my-3 {
+    margin-bottom: 0!important;
+}
+
+.input-group>.custom-select:not(:last-child),
+.input-group>.form-control:not(:last-child) {
+    border-top-right-radius: .25rem;
+    border-bottom-right-radius: .25rem;
+ }
+
+#new-field {
+    background: transparent;
+    border-radius: 0.25rem;
+    margin-bottom: 1rem;
+    margin-top: 1rem;
+}
+
+
 
 #checkbox {
     margin: 1rem;

@@ -9,53 +9,59 @@
 {% endblock%}
 
 {% block main %}
-    <form action="/newbet" class="needs-validation" novalidate method="POST">
+    <form action="/newbet" class="needs-validation" novalidate method="POST" enctype="multipart/form-data">
         <label for="bname">Bet title:</label>
         <div class="form-group">
-            <input type="text" class="form-control" id="bname" placeholder="Title text" name="bname" required>
+            <input type="text" class="form-control" id="bname" placeholder="Title text" name="bname" maxlength="30" required>
             <div class="valid-feedback">Valid.</div>
             <div class="invalid-feedback">Please fill out this field.</div>
         </div>
         <label for="entry">Required of each participant:</label>
         <div class="form-group">
-            <input type="text" class="form-control" id="entry" placeholder="$5,00 fee" name="entry" required>
+            <input type="text" class="form-control" id="entry" placeholder="$5,00 fee" name="entry" maxlength="30" required>
             <div class="valid-feedback">Valid.</div>
             <div class="invalid-feedback">Please fill out this field.</div>
         </div>
         <label for="date">Date:</label>
         <div class="form-group">
-            <input type="text" class="form-control" id="date" placeholder="dd/mm/yyyy" name="date">
+            <input type="date" class="form-control" id="date" placeholder="" name="date">
         </div>
         <div class="form-group">
             <label for="place">Address:</label>
-            <input type="text" class="form-control" id="place" placeholder="To participate or collect prize" name="place">
+            <input type="text" class="form-control" id="place" placeholder="To participate or collect prize" maxlength="60" name="place">
         </div>
-        <label for="about">About:</label>
+        <label for="about">About: <span>Max 300 characters</span></label>
         <div class="input-block">
-            <textarea class="form-control" id="about" name="about" placeholder="Feel free to describe whatever you want to."></textarea>
+            <textarea class="form-control" id="about" name="about" placeholder="Feel free to describe whatever you want to." maxlength="300"></textarea>
         </div>
         <label>Prize format:</label>
         <div class="form-check">
             <label class="form-check-label">
-                <input type="radio" class="form-check-input" name="optradio">Winner takes all
+                <input type="radio" class="form-check-input" name="optradio" value="Winner takes all">Winner takes all
             </label>
         </div>
         <div class="form-check">
             <label class="form-check-label">
-                <input type="radio" class="form-check-input" name="optradio">Shared prize
+                <input type="radio" class="form-check-input" name="optradio" value="Shared prize">Shared prize
             </label>
         </div>
         <label id="invites">Invite:</label>
-        <div class="input-group mb-3">
+        <div id="invite" class="input-group mb-3">
             <div class="input-group-prepend">
                 <span class="input-group-text">@</span>
             </div>
-            <input type="text" class="form-control" placeholder="Username">
+            <input type="text" class="form-control" placeholder="Username" name="invited">
+            <span id="close" onclick="deleteField(event)">
+                <img src="../static/img/close.svg" alt="Remove" />
+            </span>
         </div>
+        <button id="new-field" onclick="addInviteField()" type="button">
+            <img src="../static/img/plus.svg" alt="New Invite" />
+        </button>
         <label>Add image (Optional):</label>
         <div class="custom-file">
-            <input type="file" class="custom-file-input" id="customFile">
-            <label class="custom-file-label" for="customFile">Choose file</label>
+            <input type="file" class="custom-file-input" id="customFile" name="file">
+            <label class="custom-file-label" for="customFile">Choose image</label>
         </div>
         <div class="form-group form-check">
             <label id="checkbox" class="form-check-label">
@@ -65,34 +71,9 @@
             </label>
         </div>
 
-        <button type="submit" class="btn btn-primary">Create Bet</button>
+        <button type="submit" value="Upload" class="btn btn-primary">Create Bet</button>
     </form>
 
-<script>
-// Disable form submissions if there are invalid fields
-(function() {
-  'use strict';
-  window.addEventListener('load', function() {
-    // Get the forms we want to add validation styles to
-    var forms = document.getElementsByClassName('needs-validation');
-    // Loop over them and prevent submission
-    var validation = Array.prototype.filter.call(forms, function(form) {
-      form.addEventListener('submit', function(event) {
-        if (form.checkValidity() === false) {
-          event.preventDefault();
-          event.stopPropagation();
-        }
-        form.classList.add('was-validated');
-      }, false);
-    });
-  }, false);
-})();
-
-// Add the following code if you want the name of the file appear on select
-$(".custom-file-input").on("change", function() {
-  var fileName = $(this).val().split("\\").pop();
-  $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
-});
-</script>
+<script src="../static/scripts/newbet.js"></script>
 
 {% endblock %}

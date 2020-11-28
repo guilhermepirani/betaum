@@ -1,11 +1,12 @@
 import os
 
 from cs50 import SQL
-from flask import Flask, redirect, render_template, request, session
+from flask import Flask, redirect, render_template, request, session, url_for, abort, send_from_directory
 from flask_session import Session
 from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.utils import secure_filename
 from datetime import datetime
 
 from helpers import *
@@ -15,6 +16,12 @@ app = Flask(__name__)
 
 # Ensure templates are auto-reloaded
 app.config["TEMPLATES_AUTO_RELOAD"] = True
+
+# Upload configs
+UPLOAD_FOLDER = "./static/uploads"
+ALLOWED_EXTENSIONS = ['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif']
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024
 
 
 # Ensure responses aren't cached
@@ -143,7 +150,75 @@ def register():
 @login_required
 def newbet():
     """Register new friendly bet"""
-    return render_template("/newbet.html")
+    if request.method == "POST":
+
+        # Get user id
+        user_id = session["user_id"]
+
+        def allowed_file(filename):
+            return '.' in filename and \
+                   filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+        def upload_file():
+            if request.method == 'POST':
+                # check if the post request has the file part
+                if 'file' not in request.files:
+                    return None
+                file = request.files['file']
+
+                # submit a empty part without filename
+                if file.filename == '':
+                    return None
+
+                # Save file
+                if file and allowed_file(file.filename):
+                    filename = secure_filename(file.filename)
+                    file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+                    return "./static/uploads/{}".format(filename)
+
+        # Ensure title was submitted
+        if not request.form.get("bname"):
+            return apology("must provide a Title", 403)
+
+        # Ensure entry requirement was submitted
+        elif not request.form.get("entry"):
+            return apology("must provide an entry requirement", 403)
+
+        else:
+            db.execute(
+                "INSERT INTO bets (creator, title, requirements, date, address, format, invited, joined, image,"
+                " active) "
+                "VALUES (:creator, :title, :requirements, :date, :address, :format, :invited, :joined, :image,"
+                " :active)",
+                creator=user_id,
+                title=request.form.get("bname"),
+                requirements=request.form.get("entry"),
+                date=request.form.get("date"),
+                address=request.form.get("place"),
+                format=request.form.get("optradio"),
+                invited=request.form.getlist("invited"),
+                joined=user_id,
+                image=upload_file(),
+                active=True)
+            return redirect("/")
+
+    else:
+        return render_template("/newbet.html")
+
+
+# @app.route("/bet-page", method=["GET", "POST"])
+# @login_required
+# def bet_page():
+#     """Bet info page"""
+#
+#     if request.method == "GET":
+#         bet_id = request.form.get("id")
+#
+#         db.execute("SELECT * FROM bets WHERE id = :bet_id",
+#                    bet_id=bet_id)
+#
+#         return render_template("/bet-page.html", )
 
 
 @app.route("/profile")
@@ -165,8 +240,6 @@ def mybets():
 def friends():
     """User's friends"""
     return render_template("/friends.html")
-
-
 
 
 def errorHandler(e):
