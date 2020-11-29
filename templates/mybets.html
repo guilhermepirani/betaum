@@ -4,6 +4,31 @@
     New Bet
 {% endblock %}
 
+{% block style %}
+    <link href="/static/css/index.css" rel="stylesheet">
+{% endblock%}
+
 {% block main %}
-    IN CONSTRUCTION
+    <div id="feed-bar">
+        <a class="navbar-brand">My Bets</a>
+        <div class="input-group">
+          <input type="text" class="form-control" placeholder="Search">
+          <div class="input-group-append">
+            <button class="btn btn-outline-secondary" type="button">
+                <img src="../static/img/search.svg" alt="Search Icon">
+            </button>
+          </div>
+        </div>
+    </div>
+    {% for bet in bets %}
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">{{ bet.title}}</h5>
+                <h6 class="card-subtitle mb-2">{{ bet.requirements }} - {{ bet.format }}</h6>
+                <p class="card-text">{{ bet.date }} - {{ bet.address}}</p>
+                <a class="float-left" href="/"><img src={{"../static/img/eye.svg"}} alt="Eye Icon"></a>
+                <a class="float-right" href="/"><img src="../static/img/send.svg" alt="Send Icon"></a>
+            </div>
+        </div>
+    {% endfor %}
 {% endblock %}

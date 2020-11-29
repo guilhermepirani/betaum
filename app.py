@@ -52,7 +52,20 @@ if not os.environ.get("API_KEY"):
 @app.route("/")
 @login_required
 def index():
-    return render_template("index.html")
+
+    # Get user id
+    user_id = session["user_id"]
+
+    # Template for users without bets
+    if db.execute("SELECT COUNT(user) FROM userBets WHERE user = ?", user_id) == [{'COUNT(user)': 0}]:
+        bets = [{'image': './static/uploads/bet-index-template.png'}]
+
+    # Query for bets
+    else:
+        bets = db.execute("SELECT * FROM bets WHERE id IN (SELECT joined FROM userBets WHERE user = ?) "
+                          "ORDER BY date LIMIT 3", user_id)
+
+    return render_template("index.html", bets=bets)
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -185,22 +198,35 @@ def newbet():
         elif not request.form.get("entry"):
             return apology("must provide an entry requirement", 403)
 
+        # Insert bet into db
         else:
             db.execute(
-                "INSERT INTO bets (creator, title, requirements, date, address, format, invited, joined, image,"
-                " active) "
-                "VALUES (:creator, :title, :requirements, :date, :address, :format, :invited, :joined, :image,"
-                " :active)",
+                "INSERT INTO bets (creator, title, requirements, date, address, format, image) "
+                "VALUES (:creator, :title, :requirements, :date, :address, :format, :image)",
                 creator=user_id,
                 title=request.form.get("bname"),
                 requirements=request.form.get("entry"),
                 date=request.form.get("date"),
                 address=request.form.get("place"),
                 format=request.form.get("optradio"),
-                invited=request.form.getlist("invited"),
-                joined=user_id,
-                image=upload_file(),
-                active=True)
+                image=upload_file())  # MISSING A METHOD TO USE DEFAULT IMG IF NO UPLOADS
+
+            bet = db.execute("SELECT id FROM bets ORDER BY id DESC LIMIT 1")[0]["id"]
+
+            # Creator joins bet
+            db.execute(
+                "INSERT INTO userBets (user, joined)"
+                "VALUES (:user, :joined)",
+                user=user_id,
+                joined=bet)
+
+            # Save bet invites sent
+            invites = request.form.getlist("invited")
+            for invite in invites:
+                db.execute("INSERT INTO userBets (user, invited) VALUES (:user, :invited)",
+                           user=invite,
+                           invited=bet)
+
             return redirect("/")
 
     else:
@@ -232,14 +258,28 @@ def profile():
 @login_required
 def mybets():
     """User's ongoing bets"""
-    return render_template("/mybets.html")
+    user_id = session["user_id"]
+
+    # Query for bets
+    bets = db.execute("SELECT * FROM bets WHERE id IN (SELECT joined FROM userBets WHERE user = ?) "
+                      "ORDER BY date", user_id)
+
+    if not bets:
+        return render_template("/mybets.html")
+
+    else:
+        return render_template("/mybets.html", bets=bets)
 
 
 @app.route("/friends")
 @login_required
 def friends():
-    """User's friends"""
-    return render_template("/friends.html")
+    """Show list of friends"""
+    user_id = session["user_id"]
+
+    list_of_friends = db.execute("SELECT user_two FROM friends WHERE user_one = :user_id", user_id=user_id)
+
+    return render_template("friends.html", friends=list_of_friends)
 
 
 def errorHandler(e):

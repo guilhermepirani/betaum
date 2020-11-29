@@ -1,9 +1,30 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    New Bet
+    Friends
 {% endblock %}
 
+{% block style %}
+    <link href="/static/css/friends.css" rel="stylesheet">
+{% endblock%}
+
 {% block main %}
-    IN CONSTRUCTION
+<table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Avatar</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for friend in friends %}
+                <tr class="w3-hover-green">
+                    <td><img src="./static/img/user.svg" alt="avatar"></td>
+<!--                    <td>{{ friend.firstname }}</td>-->
+                    <td>{{ friend.user_two }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}
