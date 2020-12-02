@@ -26,8 +26,11 @@
                 <h5 class="card-title">{{ bet.title}}</h5>
                 <h6 class="card-subtitle mb-2">{{ bet.requirements }} - {{ bet.format }}</h6>
                 <p class="card-text">{{ bet.date }} - {{ bet.address}}</p>
-                <a class="float-left" href="/"><img src={{"../static/img/eye.svg"}} alt="Eye Icon"></a>
-                <a class="float-right" href="/"><img src="../static/img/send.svg" alt="Send Icon"></a>
+                <form action="/mybets" method="post">
+                    <button class="btn btn-primary float-left" type="submit" name="bet" value="{{ bet.id }}">
+                        <img src={{"../static/img/eye.svg"}} alt="Eye Icon">
+                    </button>
+                </form>
             </div>
         </div>
     {% endfor %}

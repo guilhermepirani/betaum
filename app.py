@@ -49,73 +49,6 @@ if not os.environ.get("API_KEY"):
 """
 
 
-@app.route("/")
-@login_required
-def index():
-
-    # Get user id
-    user_id = session["user_id"]
-
-    # Template for users without bets
-    if db.execute("SELECT COUNT(user) FROM userBets WHERE user = ?", user_id) == [{'COUNT(user)': 0}]:
-        bets = [{'image': './static/uploads/bet-index-template.png'}]
-
-    # Query for bets
-    else:
-        bets = db.execute("SELECT * FROM bets WHERE id IN (SELECT joined FROM userBets WHERE user = ?) "
-                          "ORDER BY date LIMIT 3", user_id)
-
-    return render_template("index.html", bets=bets)
-
-
-@app.route("/login", methods=["GET", "POST"])
-def login():
-    """Log user in"""
-
-    # Forget any user_id
-    session.clear()
-
-    # User reached route via POST (as by submitting a form via POST)
-    if request.method == "POST":
-
-        # Ensure username was submitted
-        if not request.form.get("email"):
-            return apology("must provide E-mail", 403)
-
-        # Ensure password was submitted
-        elif not request.form.get("password"):
-            return apology("must provide password", 403)
-
-        # Query database for username
-        rows = db.execute("SELECT * FROM users WHERE email = :email",
-                          email=request.form.get("email"))
-
-        # Ensure username exists and password is correct
-        if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")):
-            return apology("invalid E-mail and/or password", 403)
-
-        # Remember which user has logged in
-        session["user_id"] = rows[0]["id"]
-
-        # Redirect user to home page
-        return redirect("/")
-
-    # User reached route via GET (as by clicking a link or via redirect)
-    else:
-        return render_template("login.html")
-
-
-@app.route("/logout")
-def logout():
-    """Log user out"""
-
-    # Forget any user_id
-    session.clear()
-
-    # Redirect user to login form
-    return redirect("/")
-
-
 @app.route("/register", methods=["GET", "POST"])
 def register():
     """Register user"""
@@ -159,6 +92,62 @@ def register():
         return render_template("/register.html")
 
 
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    """Log user in"""
+
+    # Forget any user_id
+    session.clear()
+
+    # User reached route via POST (as by submitting a form via POST)
+    if request.method == "POST":
+
+        # Ensure username was submitted
+        if not request.form.get("email"):
+            return apology("must provide E-mail", 403)
+
+        # Ensure password was submitted
+        elif not request.form.get("password"):
+            return apology("must provide password", 403)
+
+        # Query database for username
+        rows = db.execute("SELECT * FROM users WHERE email = :email",
+                          email=request.form.get("email"))
+
+        # Ensure username exists and password is correct
+        if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")):
+            return apology("invalid E-mail and/or password", 403)
+
+        # Remember which user has logged in
+        session["user_id"] = rows[0]["id"]
+
+        # Redirect user to home page
+        return redirect("/")
+
+    # User reached route via GET (as by clicking a link or via redirect)
+    else:
+        return render_template("login.html")
+
+
+@app.route("/")
+@login_required
+def index():
+
+    # Get user id
+    user_id = session["user_id"]
+
+    # Template for users without bets
+    if db.execute("SELECT COUNT(user) FROM userBets WHERE user = ?", user_id) == [{'COUNT(user)': 0}]:
+        bets = [{'image': './static/uploads/bet-index-template.png'}]
+
+    # Query for bets
+    else:
+        bets = db.execute("SELECT * FROM bets WHERE id IN (SELECT joined FROM userBets WHERE user = ?) "
+                          "ORDER BY date LIMIT 3", user_id)
+
+    return render_template("index.html", bets=bets)
+
+
 @app.route("/newbet", methods=["GET", "POST"])
 @login_required
 def newbet():
@@ -167,28 +156,6 @@ def newbet():
 
         # Get user id
         user_id = session["user_id"]
-
-        def allowed_file(filename):
-            return '.' in filename and \
-                   filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-        def upload_file():
-            if request.method == 'POST':
-                # check if the post request has the file part
-                if 'file' not in request.files:
-                    return None
-                file = request.files['file']
-
-                # submit a empty part without filename
-                if file.filename == '':
-                    return None
-
-                # Save file
-                if file and allowed_file(file.filename):
-                    filename = secure_filename(file.filename)
-                    file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-
-                    return "./static/uploads/{}".format(filename)
 
         # Ensure title was submitted
         if not request.form.get("bname"):
@@ -208,6 +175,7 @@ def newbet():
                 requirements=request.form.get("entry"),
                 date=request.form.get("date"),
                 address=request.form.get("place"),
+                about=request.form.get("about"),
                 format=request.form.get("optradio"),
                 image=upload_file())  # MISSING A METHOD TO USE DEFAULT IMG IF NO UPLOADS
 
@@ -222,29 +190,19 @@ def newbet():
 
             # Save bet invites sent
             invites = request.form.getlist("invited")
-            for invite in invites:
-                db.execute("INSERT INTO userBets (user, invited) VALUES (:user, :invited)",
-                           user=invite,
-                           invited=bet)
+            if invites[0] == '':
+                return redirect("/")
 
-            return redirect("/")
+            else:
+                for invite in invites:
+                    db.execute("INSERT INTO userBets (user, invited) VALUES (:user, :invited)",
+                               user=invite,
+                               invited=bet)
+
+                return redirect("/")
 
     else:
         return render_template("/newbet.html")
-
-
-# @app.route("/bet-page", method=["GET", "POST"])
-# @login_required
-# def bet_page():
-#     """Bet info page"""
-#
-#     if request.method == "GET":
-#         bet_id = request.form.get("id")
-#
-#         db.execute("SELECT * FROM bets WHERE id = :bet_id",
-#                    bet_id=bet_id)
-#
-#         return render_template("/bet-page.html", )
 
 
 @app.route("/profile")
@@ -254,11 +212,16 @@ def profile():
     return render_template("/profile.html")
 
 
-@app.route("/mybets")
+@app.route("/mybets", methods=["GET", "POST"])
 @login_required
 def mybets():
     """User's ongoing bets"""
     user_id = session["user_id"]
+
+    # View button route
+    if request.method == 'POST':
+        bet_id = request.form.get("bet")
+        return redirect(url_for('bet_page', bet_id=bet_id))
 
     # Query for bets
     bets = db.execute("SELECT * FROM bets WHERE id IN (SELECT joined FROM userBets WHERE user = ?) "
@@ -271,6 +234,24 @@ def mybets():
         return render_template("/mybets.html", bets=bets)
 
 
+@app.route("/bet-page", methods=["GET", "POST"])
+@login_required
+def bet_page():
+    """Bet info page"""
+    user_id = session["user_id"]
+
+    # Request arg with bet_id from url
+    bet_id = request.args.get('bet_id', None)
+
+    # Query for bet info
+    bet_info = db.execute("SELECT * FROM bets WHERE id = :bet_id", bet_id=bet_id)
+
+    # Query for invites and joined info
+    people = db.execute("SELECT * FROM userBets WHERE invited = :bet_id OR joined = :bet_id", bet_id=bet_id)
+
+    return render_template("/bet-page.html/", bet=bet_info, user=user_id, people=people)
+
+
 @app.route("/friends")
 @login_required
 def friends():
@@ -280,6 +261,17 @@ def friends():
     list_of_friends = db.execute("SELECT user_two FROM friends WHERE user_one = :user_id", user_id=user_id)
 
     return render_template("friends.html", friends=list_of_friends)
+
+
+@app.route("/logout")
+def logout():
+    """Log user out"""
+
+    # Forget any user_id
+    session.clear()
+
+    # Redirect user to login form
+    return redirect("/")
 
 
 def errorHandler(e):

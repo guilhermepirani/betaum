@@ -18,7 +18,7 @@
             <div class="carousel-item active">
                 <img src="{{bets[0].image}}" width="1100" height="500">
                 <div class="carousel-caption">
-                    <h3>{{ bets[0].title }}</h3>
+                    <a href="/bet-page?bet_id={{ bets[0].id }}"><h3>{{ bets[0].title }}</h3></a>
                     <p>{{ bets[0].format }}</p>
                 </div>
             </div>
@@ -26,7 +26,7 @@
                 <div class="carousel-item">
                     <img src="{{bet.image}}" width="1100" height="500">
                     <div class="carousel-caption">
-                        <h3>{{ bet.title }}</h3>
+                        <a href="/bet-page?bet_id={{ bet.id }}"><h3>{{ bet.title }}</h3></a>
                         <p>{{ bet.format }}</p>
                     </div>
                 </div>

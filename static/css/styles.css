@@ -28,7 +28,6 @@ nav .navbar-brand .green
     /* color for brand */
     color: #2e944b;
     font-family: 'Permanent Marker', cursive;
-    font-size: 3rem;
 }
 
 
@@ -89,5 +88,9 @@ main img
     max-width: 100%;
 }
 
+/* Buttons */
 
-
+.btn-primary {
+background: #2e944b;
+border-color: #086708;
+}
