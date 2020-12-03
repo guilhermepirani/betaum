@@ -62,3 +62,10 @@ def upload_file():
             file.save(os.path.join(UPLOAD_FOLDER, filename))
 
             return "./static/uploads/{}".format(filename)
+
+
+def delete_file(old_file):
+    template = "./static/uploads/bet-img-template.png"
+    if os.path.exists(old_file):
+        if not old_file == template:
+            os.remove(old_file)

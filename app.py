@@ -168,16 +168,16 @@ def newbet():
         # Insert bet into db
         else:
             db.execute(
-                "INSERT INTO bets (creator, title, requirements, date, address, format, image) "
-                "VALUES (:creator, :title, :requirements, :date, :address, :format, :image)",
+                "INSERT INTO bets (creator, title, requirements, date, address, about, format, image) "
+                "VALUES (:creator, :title, :requirements, :date, :address, :about, :format, :image)",
                 creator=user_id,
                 title=request.form.get("bname"),
                 requirements=request.form.get("entry"),
                 date=request.form.get("date"),
                 address=request.form.get("place"),
-                about=request.form.get("about"),
+                about=None if request.form.get("about") == '' else request.form.get("about"),
                 format=request.form.get("optradio"),
-                image=upload_file())  # MISSING A METHOD TO USE DEFAULT IMG IF NO UPLOADS
+                image=upload_file())
 
             bet = db.execute("SELECT id FROM bets ORDER BY id DESC LIMIT 1")[0]["id"]
 
@@ -243,13 +243,62 @@ def bet_page():
     # Request arg with bet_id from url
     bet_id = request.args.get('bet_id', None)
 
-    # Query for bet info
-    bet_info = db.execute("SELECT * FROM bets WHERE id = :bet_id", bet_id=bet_id)
+    if request.method == 'POST':
 
-    # Query for invites and joined info
-    people = db.execute("SELECT * FROM userBets WHERE invited = :bet_id OR joined = :bet_id", bet_id=bet_id)
+        file = request.files['file']
+        bet_img = db.execute("SELECT image FROM bets WHERE id=:bet_id", bet_id=bet_id)
 
-    return render_template("/bet-page.html/", bet=bet_info, user=user_id, people=people)
+        db.execute(
+            "UPDATE bets"
+            " SET "
+            "title=:title,"
+            "requirements=:requirements,"
+            "date=:date,"
+            "address=:address,"
+            "about=:about,"
+            "image=:image "
+            "WHERE id=:bet_id",
+            title=request.form.get("bname"),
+            requirements=request.form.get("entry"),
+            date=request.form.get("date"),
+            address=request.form.get("place"),
+            about=None if 'None' else request.form.get("about"),
+            image=bet_img[0]['image'] if file.filename == '' else upload_file(),
+            bet_id=bet_id)
+
+        # Delete old img file
+        new_bet_img = db.execute("SELECT image FROM bets WHERE id=:bet_id", bet_id=bet_id)
+        if not new_bet_img == bet_img:
+            delete_file(bet_img[0]['image'])
+
+        return redirect(f"/bet-page?bet_id={bet_id}")
+
+    else:
+
+        # Query for bet info
+        bet_info = db.execute("SELECT * FROM bets WHERE id = :bet_id", bet_id=bet_id)
+
+        # Query for invites and joined info
+        people = db.execute("SELECT * FROM userBets WHERE invited = :bet_id OR joined = :bet_id", bet_id=bet_id)
+
+        return render_template("/bet-page.html/", bet=bet_info, user=user_id, people=people)
+
+
+@app.route("/delete-bet")
+@login_required
+def delete_bet():
+
+    # Get bet id from url
+    bet_id = request.args.get('bet_id', None)
+
+    # Get bet img url
+    bet_img = db.execute("SELECT image FROM bets WHERE id=:bet_id", bet_id=bet_id)
+
+    # Query to delete row from table
+    db.execute("DELETE FROM bets WHERE id = :bet_id", bet_id=bet_id)
+    delete_file(bet_img[0]['image'])
+
+    return redirect("/mybets")
 
 
 @app.route("/friends")
