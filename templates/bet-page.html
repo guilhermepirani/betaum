@@ -119,7 +119,7 @@
                 </div>
             {% endif %}
             {% if row.user == user and row.invited == bet[0].id %}
-                <button class="btn fixed-btn flex-fill">Join</button>
+                <button class="btn fixed-btn flex-fill" type="submit" onclick="confirmJoin()">Join</button>
             {% endif %}
         {% endfor %}
     </div>
@@ -128,9 +128,16 @@
 {% block script %}
 <script>
     function confirmDelete() {
-      var r = confirm("Are you sure you want to delete this bet?\nThis is irreversible.\nPres OK to delete or Cancel to return to bet page");
-      if (r == true) {
+        var r = confirm("Are you sure you want to delete this bet?\nThis is irreversible.\nPres OK to delete or Cancel to return to bet page");
+        if (r == true) {
         window.location.replace("/delete-bet?bet_id={{ bet[0].id }}");
+        }
+    }
+
+    function confirmJoin() {
+        var r = confirm("Are you sure you want to Join this {{ bet[0].requirements }} bet?\nThis is irreversible.\nPres OK to Join or Cancel to return to bet page");
+        if (r == true) {
+        window.location.replace("/join-bet?bet_id={{ bet[0].id }}");
         }
     }
 </script>

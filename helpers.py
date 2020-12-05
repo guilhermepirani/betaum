@@ -10,6 +10,7 @@ from werkzeug.utils import secure_filename
 ALLOWED_EXTENSIONS = ['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif']
 UPLOAD_FOLDER = "./static/uploads"
 
+
 def apology(message, code=400):
     """Render message as an apology to user."""
     def escape(s):

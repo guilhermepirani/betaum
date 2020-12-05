@@ -165,8 +165,9 @@ def newbet():
         elif not request.form.get("entry"):
             return apology("must provide an entry requirement", 403)
 
-        # Insert bet into db
         else:
+
+            # Insert bet into db
             db.execute(
                 "INSERT INTO bets (creator, title, requirements, date, address, about, format, image) "
                 "VALUES (:creator, :title, :requirements, :date, :address, :about, :format, :image)",
@@ -179,6 +180,7 @@ def newbet():
                 format=request.form.get("optradio"),
                 image=upload_file())
 
+            # Get biggest(equals latest) bet id
             bet = db.execute("SELECT id FROM bets ORDER BY id DESC LIMIT 1")[0]["id"]
 
             # Creator joins bet
@@ -212,9 +214,9 @@ def profile():
     return render_template("/profile.html")
 
 
-@app.route("/mybets", methods=["GET", "POST"])
+@app.route("/my-bets", methods=["GET", "POST"])
 @login_required
-def mybets():
+def my_bets():
     """User's ongoing bets"""
     user_id = session["user_id"]
 
@@ -223,15 +225,19 @@ def mybets():
         bet_id = request.form.get("bet")
         return redirect(url_for('bet_page', bet_id=bet_id))
 
-    # Query for bets
+    # Query for joined bets
     bets = db.execute("SELECT * FROM bets WHERE id IN (SELECT joined FROM userBets WHERE user = ?) "
                       "ORDER BY date", user_id)
 
+    # Query for invited bets
+    inv_bets = db.execute("SELECT * FROM bets WHERE id IN (SELECT invited FROM userBets WHERE user = ?) "
+                          "ORDER BY date", user_id)
+
     if not bets:
-        return render_template("/mybets.html")
+        return render_template("/my-bets.html")
 
     else:
-        return render_template("/mybets.html", bets=bets)
+        return render_template("/my-bets.html", bets=bets, inv_bets=inv_bets)
 
 
 @app.route("/bet-page", methods=["GET", "POST"])
@@ -245,19 +251,23 @@ def bet_page():
 
     if request.method == 'POST':
 
+        # Get img from form
         file = request.files['file']
+
+        # Get bet img url from db
         bet_img = db.execute("SELECT image FROM bets WHERE id=:bet_id", bet_id=bet_id)
 
+        # Update db table
         db.execute(
             "UPDATE bets"
             " SET "
-            "title=:title,"
-            "requirements=:requirements,"
-            "date=:date,"
-            "address=:address,"
-            "about=:about,"
-            "image=:image "
-            "WHERE id=:bet_id",
+            "title = :title,"
+            "requirements = :requirements,"
+            "date = :date,"
+            "address = :address,"
+            "about = :about,"
+            "image = :image "
+            "WHERE id = :bet_id",
             title=request.form.get("bname"),
             requirements=request.form.get("entry"),
             date=request.form.get("date"),
@@ -287,6 +297,7 @@ def bet_page():
 @app.route("/delete-bet")
 @login_required
 def delete_bet():
+    """Delete a bet"""
 
     # Get bet id from url
     bet_id = request.args.get('bet_id', None)
@@ -298,7 +309,31 @@ def delete_bet():
     db.execute("DELETE FROM bets WHERE id = :bet_id", bet_id=bet_id)
     delete_file(bet_img[0]['image'])
 
-    return redirect("/mybets")
+    return redirect("/my-bets")
+
+
+@app.route("/join-bet")
+@login_required
+def join_bet():
+    """User join a bet"""
+    user_id = session["user_id"]
+
+    # Get bet id from url
+    bet_id = request.args.get('bet_id', None)
+
+    # Update db table
+    db.execute(
+        "UPDATE userBets"
+        " SET "
+        "invited = :invited, "
+        "joined = :joined "
+        "WHERE invited = :bet_id AND user = :user_id",
+        invited=None,
+        joined=bet_id,
+        bet_id=bet_id,
+        user_id=user_id)
+
+    return redirect("/my-bets")
 
 
 @app.route("/friends")
@@ -307,9 +342,11 @@ def friends():
     """Show list of friends"""
     user_id = session["user_id"]
 
-    list_of_friends = db.execute("SELECT user_two FROM friends WHERE user_one = :user_id", user_id=user_id)
+    friend_requests = db.execute("SELECT request_user FROM friends WHERE addressed_user = :user_id", user_id=user_id)
 
-    return render_template("friends.html", friends=list_of_friends)
+    friended_users = db.execute("SELECT addressed_user FROM friends WHERE request_user = :user_id", user_id=user_id)
+
+    return render_template("friends.html", requests=friend_requests, friends=friended_users)
 
 
 @app.route("/logout")

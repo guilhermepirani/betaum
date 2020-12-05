@@ -94,3 +94,14 @@ main img
 background: #2e944b;
 border-color: #086708;
 }
+
+.menu-button {
+    border-radius: 0!important;
+}
+
+.btn.focus, .btn:focus,
+.btn-primary:not(:disabled):not(.disabled).active:focus,
+.btn-primary:not(:disabled):not(.disabled):active:focus,
+.show>.btn-primary.dropdown-toggle:focus {
+    box-shadow: none;
+}
