@@ -39,10 +39,6 @@
         // Variables FOR MY-BETS
         btn1 = document.getElementById("joined-btn");
         btn2 = document.getElementById("invited-btn");
-        input = document.getElementById("search-input");
-        filter = input.value.toUpperCase();
-        div = document.getElementById(id);
-        element_li = div.getElementsByClassName("card");
 
         // Change search targets by active button(translates to div on my-bets)
         if (btn1.classList.contains("active")) {
@@ -50,6 +46,11 @@
         } else {
             id = "invited-bets"
         }
+
+        input = document.getElementById("search-input");
+        filter = input.value.toUpperCase();
+        div = document.getElementById(id);
+        element_li = div.getElementsByClassName("card");
 
         // Hiding or showing elements responding to search
         for (i = 0; i < element_li.length; i++) {
