@@ -39,7 +39,7 @@ label {
 }
 
 .avatar {
-    margin: 0 0 0.75rem 1rem;
+    margin: 0 -1.25rem 0.75rem 0rem;
 }
 
 .about {
@@ -62,30 +62,6 @@ label {
 }
 
 /* modals */
-.modal-dialog-centered {
-    align-items: inherit;
-
-}
-
-.modal-backdrop {
-    z-index: 1000!important;
-}
-
-.modal-content {
-    background: #42413c;
-    color: #faf9f5;
-}
-
-.modal-header {
-    border: None;
-}
-
-.modal-title {
-    font-family: 'Permanent Marker', cursive;
-    font-size: 2rem;
-    margin: inherit;
-}
-
 .form-group {
     margin-bottom: 1rem;
 }
@@ -102,4 +78,40 @@ label {
 
 #invite-btn {
     flex: auto;
+}
+
+button {
+    background-color: #2e944b;
+    border: 1px solid #086708;
+    color: white;
+    padding: 10px 24px;
+    cursor: pointer;
+}
+
+#invites {
+    margin-top: 1rem;
+}
+
+span > img {
+    position: absolute;
+    z-index: 10;
+    padding: 0.75rem;
+    right: 1%;
+}
+
+.mb-3, .my-3 {
+    margin-bottom: 0!important;
+}
+
+.input-group>.custom-select:not(:last-child),
+.input-group>.form-control:not(:last-child) {
+    border-top-right-radius: .25rem;
+    border-bottom-right-radius: .25rem;
+ }
+
+#new-field {
+    background: transparent;
+    margin-bottom: 1rem;
+    margin-top: 1rem;
+    border: none;
 }

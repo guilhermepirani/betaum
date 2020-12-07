@@ -10,27 +10,49 @@
 
 {% block main %}
     <div class="d-flex">
-        <button id="joined-btn" class="btn btn-primary menu-button flex-fill active" onclick="selectButton(event)">Friends</button>
-        <button id="invited-btn" class="btn btn-primary menu-button flex-fill" onclick="selectButton(event)">Requests</button>
+        <button id="friends-btn" class="btn btn-primary menu-button flex-fill active" onclick="selectButton(event), toggleDivs('joined-bets')">Friends</button>
+        <button id="requests-btn" class="btn btn-primary menu-button flex-fill" onclick="selectButton(event), toggleDivs('invited-bets')">Requests</button>
     </div>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Avatar</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for friend in friends %}
-                <tr class="w3-hover-green">
-                    <td><img src="./static/img/user.svg" alt="avatar"></td>
-<!--                    <td>{{ friend }}</td>-->
-                    <td>{{ friend }}</td>
+    <div id="joined-bets" class="bets">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Avatar</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for friend in friends %}
+                    <tr class="w3-hover-blue">
+                        <td><img src="{{ friend.avatar }}" class="avatar" alt="avatar"></td>
+                        <td>{{ friend.firstname }}</td>
+                        <td>{{ friend.lastname }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div id="invited-bets" class="bets d-none">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Avatar</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in requests %}
+                    <tr class="w3-hover-blue">
+                        <td><img src="{{ user.avatar }}" class="avatar" alt="avatar"></td>
+                        <td>{{ user.firstname }}</td>
+                        <td>{{ user.lastname }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}
 
 {% block script %}<script src="static/scripts/scripts.js"></script>{% endblock %}

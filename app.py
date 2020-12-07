@@ -119,7 +119,7 @@ def login():
             return apology("invalid E-mail and/or password", 403)
 
         # Remember which user has logged in
-        session["user_id"] = rows[0]["id"]
+        session["user_id"] = rows[0]["user"]
 
         # Redirect user to home page
         return redirect("/")
@@ -207,11 +207,69 @@ def newbet():
         return render_template("/newbet.html")
 
 
-@app.route("/profile")
+@app.route("/profile", methods=["GET", "POST"])
 @login_required
 def profile():
     """User's Profile"""
-    return render_template("/profile.html")
+    user_id = session["user_id"]
+
+    if request.method == "POST":
+
+        # Add user to friend list
+        addressed_user = request.args.get('user', None)
+        if not user_id == addressed_user:
+
+            db.execute("INSERT INTO friends (request_user, addressed_user) VALUES (:request_user, :addressed_user)",
+                       request_user=user_id,
+                       addressed_user=addressed_user)
+
+    else:
+
+        user_info = db.execute("SELECT firstname, lastname, avatar FROM users WHERE user = :user_id", user_id=user_id)
+
+    return render_template("/profile.html", user_info=user_info)
+
+
+@app.route("/settings", methods=["GET", "POST"])
+@login_required
+def settings():
+    """User's Profile"""
+    user_id = session["user_id"]
+
+    user_info = db.execute("SELECT firstname, lastname, avatar FROM users WHERE user = :user_id", user_id=user_id)
+
+    return render_template("/settings.html", user_info=user_info)
+
+
+@app.route("/change-password", methods=["POST"])
+@login_required
+def newPassword():
+    """Manage Account Settings"""
+    user_id = session["user_id"]
+
+    # Query database for username
+    rows = db.execute("SELECT * FROM users WHERE email = :email",
+                      email=request.form.get("email"))
+
+    # Ensure username exists and password is correct
+    if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("old-password")):
+        return apology("invalid username and/or password", 403)
+
+    if not request.form.get("password"):
+        return apology("must provide password", 403)
+
+    # Ensure password meet requirements
+    if len(request.form.get("password")) < 6:
+        return apology("Password needs to be bigger or equal to six characters", 403)
+
+    # Ensure password and confirmation match
+    elif request.form.get("confirmation") != request.form.get("password"):
+        return apology("Passwords don't match", 403)
+
+    db.execute("UPDATE users SET hash = :hash WHERE user = :user_id",
+               hash=generate_password_hash(request.form.get("password")), user_id=user_id)
+
+    return redirect("/")
 
 
 @app.route("/my-bets", methods=["GET", "POST"])
@@ -289,9 +347,32 @@ def bet_page():
         bet_info = db.execute("SELECT * FROM bets WHERE id = :bet_id", bet_id=bet_id)
 
         # Query for invites and joined info
-        people = db.execute("SELECT * FROM userBets WHERE invited = :bet_id OR joined = :bet_id", bet_id=bet_id)
+        people = db.execute(
+            "SELECT * FROM userBets "
+            "INNER JOIN users USING(user) "
+            "WHERE invited = :bet_id OR joined = :bet_id", bet_id=bet_id)
 
         return render_template("/bet-page.html/", bet=bet_info, user=user_id, people=people)
+
+
+@app.route("/invite-friend")
+@login_required
+def invite_friend():
+    # Request arg with bet_id from url
+    bet_id = request.args.get('bet_id', None)
+
+    # Save bet invites sent
+    invites = request.form.getlist("invited")
+    if invites[0] == '':
+        return redirect(f"/bet-page?bet_id={bet_id}")
+
+    else:
+        for invite in invites:
+            db.execute("INSERT INTO userBets (user, invited) VALUES (:user, :invited)",
+                       user=invite,
+                       invited=bet_id)
+
+        return redirect(f"/bet-page?bet_id={bet_id}")
 
 
 @app.route("/delete-bet")
@@ -303,7 +384,7 @@ def delete_bet():
     bet_id = request.args.get('bet_id', None)
 
     # Get bet img url
-    bet_img = db.execute("SELECT image FROM bets WHERE id=:bet_id", bet_id=bet_id)
+    bet_img = db.execute("SELECT image FROM bets WHERE id = :bet_id", bet_id=bet_id)
 
     # Query to delete row from table
     db.execute("DELETE FROM bets WHERE id = :bet_id", bet_id=bet_id)
@@ -342,9 +423,22 @@ def friends():
     """Show list of friends"""
     user_id = session["user_id"]
 
-    friend_requests = db.execute("SELECT request_user FROM friends WHERE addressed_user = :user_id", user_id=user_id)
+    inc_friend = db.execute(
+        "SELECT * FROM users WHERE user IN ("
+        "SELECT request_user FROM friends WHERE addressed_user = :user_id) ORDER BY firstname", user_id=user_id)
 
-    friended_users = db.execute("SELECT addressed_user FROM friends WHERE request_user = :user_id", user_id=user_id)
+    out_friend = db.execute(
+        "SELECT * FROM users WHERE user IN ("
+        "SELECT addressed_user FROM friends WHERE request_user = :user_id) ORDER BY firstname", user_id=user_id)
+
+    friend_requests = []
+    friended_users = []
+
+    for friend in inc_friend:
+        if friend in out_friend:
+            friended_users.append(friend)
+        else:
+            friend_requests.append(friend)
 
     return render_template("friends.html", requests=friend_requests, friends=friended_users)
 

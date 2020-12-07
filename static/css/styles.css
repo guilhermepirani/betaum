@@ -62,6 +62,12 @@ nav .navbar-brand .green
     padding: 0;
 }
 
+.navbar-toggler img {
+    vertical-align: middle;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
 
 /* Main block universal styles */
 main .form-control
@@ -88,6 +94,10 @@ main img
     max-width: 100%;
 }
 
+.table td, .table th {
+    vertical-align: middle;
+}
+
 /* Buttons */
 
 .btn-primary {
@@ -104,4 +114,39 @@ border-color: #086708;
 .btn-primary:not(:disabled):not(.disabled):active:focus,
 .show>.btn-primary.dropdown-toggle:focus {
     box-shadow: none;
+}
+
+
+/* modals */
+.modal-dialog-centered {
+    align-items: inherit;
+
+}
+
+.modal-backdrop {
+    z-index: 1000!important;
+}
+
+.modal-content {
+    background: #42413c;
+    color: #faf9f5;
+}
+
+.modal-header {
+    border: None;
+}
+
+.modal-title {
+    font-family: 'Permanent Marker', cursive;
+    font-size: 2rem;
+    margin: inherit;
+}
+
+/* Avatars */
+
+.avatar {
+    vertical-align: middle;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
 }

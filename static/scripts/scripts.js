@@ -63,3 +63,58 @@
             }
         }
     }
+
+// ----------------------------------------------------------------------------------------------------------------- //
+// Add invite field
+
+    function addInviteField() {
+
+        // Get invite container #invite
+        const container = document.querySelector("#invite");
+
+        // Get duplication container #invite
+        const fieldsContainer = document.querySelectorAll("#invite");
+
+        // Clone last added invite
+        const newFieldContainer = fieldsContainer[fieldsContainer.length -1].cloneNode(true);
+        const input = newFieldContainer.children[0];
+        if (input.value == "") {
+            return;
+        }
+
+        // Clean field
+        input.value = "";
+
+        // Delete close button
+        if (fieldsContainer.length === 1) {
+            const close = document.querySelector("#close")
+            close.remove()
+        }
+
+        // Add clone to container #invite
+        container.appendChild(newFieldContainer);
+
+    }
+
+// ----------------------------------------------------------------------------------------------------------------- //
+// Deleting containers
+
+    function deleteField() {
+
+        const span = event.currentTarget;
+
+        const fieldsContainer = document.querySelectorAll("#invite");
+
+        if (fieldsContainer.length <= 2) {
+
+            // Delete field value
+            span.parentNode.value = "";
+            return;
+
+        } else {
+
+            // delete field
+            span.parentNode.remove();
+        }
+
+    }

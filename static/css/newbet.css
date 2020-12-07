@@ -45,9 +45,9 @@ span > img {
 
 #new-field {
     background: transparent;
-    border-radius: 0.25rem;
     margin-bottom: 1rem;
     margin-top: 1rem;
+    border: none;
 }
 
 

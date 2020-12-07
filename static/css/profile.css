@@ -1,0 +1,36 @@
+
+
+#profile-avatar {
+    width: 180px;
+    border-radius: 50%;
+
+}
+
+.profile-info {
+
+}
+
+h4 {
+    margin-bottom: 2rem;
+}
+.btn-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.btn-group button{
+
+    background-color: #2e944b;
+    border: 1px solid #086708;
+    color: white;
+    padding: 10px 24px;
+    cursor: pointer;
+}
+
+.btn-group button:not(:last-child) {
+  border-bottom: none; /* Prevent double borders */
+}
+
+.btn-primary-group {
+    border-radius: 0;
+}
