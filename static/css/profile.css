@@ -1,21 +1,75 @@
+.p-5 {
+    padding: 0!important;
+}
 
+.profile-bg {
+    position: relative;
+    top: 0px;
+    height: 320px;
+
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    overflow-y: hidden;
+    filter: blur(5px)
+}
+
+.profile-avatar {
+    top: -325px;
+    position: relative;
+}
 
 #profile-avatar {
-    width: 180px;
+    width: 220px;
+    height: 220px;
     border-radius: 50%;
+    padding: 4px;
+    background: #2e944b;
+    margin-top: 2rem;
+}
+
+.bg-crop {
+    position: relative;
+    top: -315px;
 
 }
 
-.profile-info {
-
+.add-friend {
+    position: relative;
+    z-index: 100;
 }
 
-h4 {
-    margin-bottom: 2rem;
+.done {
+    position: relative;
+    z-index: 100;
+    background: #0062cc;
+    color: #fff;
 }
+
+.ok {
+    vertical-align: bottom;
+    padding: 0 0 0 1rem;
+}
+
+h3 {
+    margin-bottom: 1rem;
+    font-weight: bold;
+}
+
+hr {
+    margin: 0;
+    position: relative;
+    width: 100%;
+    top: -20px;
+    z-index: 10;
+}
+
 .btn-group {
     display: flex;
     flex-direction: column;
+    position: relative;
+    top: -280px;
+    margin: 1rem 3rem 3rem 3rem;
 }
 
 .btn-group button{
@@ -25,6 +79,7 @@ h4 {
     color: white;
     padding: 10px 24px;
     cursor: pointer;
+    margin: 0!important;
 }
 
 .btn-group button:not(:last-child) {
@@ -33,4 +88,10 @@ h4 {
 
 .btn-primary-group {
     border-radius: 0;
+}
+
+.footer {
+    position: relative;
+    top: -280px;
+    margin-bottom: -240px;
 }

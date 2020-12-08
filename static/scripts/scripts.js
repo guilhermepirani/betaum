@@ -100,7 +100,6 @@
 // Deleting containers
 
     function deleteField() {
-
         const span = event.currentTarget;
 
         const fieldsContainer = document.querySelectorAll("#invite");
@@ -117,4 +116,11 @@
             span.parentNode.remove();
         }
 
+    }
+
+// ----------------------------------------------------------------------------------------------------------------- //
+// Redirecting to clicked user's profile
+
+    function friendProfile(user) {
+        window.location.replace(`/profile?id=${user}`);
     }

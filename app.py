@@ -192,7 +192,11 @@ def newbet():
 
             # Save bet invites sent
             invites = request.form.getlist("invited")
-            if invites[0] == '':
+
+            # Remove any duplicates in invites
+            invites = list(dict.fromkeys(invites))
+
+            if len(invites) == 0:
                 return redirect("/")
 
             else:
@@ -204,7 +208,13 @@ def newbet():
                 return redirect("/")
 
     else:
-        return render_template("/newbet.html")
+        user_id = session["user_id"]
+
+        func_return = get_friends(user_id)
+
+        friended_users = func_return[0]
+
+        return render_template("/newbet.html", friends=friended_users)
 
 
 @app.route("/profile", methods=["GET", "POST"])
@@ -212,22 +222,32 @@ def newbet():
 def profile():
     """User's Profile"""
     user_id = session["user_id"]
+    profile_id = request.args.get('id', None)
 
     if request.method == "POST":
 
         # Add user to friend list
-        addressed_user = request.args.get('user', None)
+        addressed_user = profile_id
         if not user_id == addressed_user:
 
             db.execute("INSERT INTO friends (request_user, addressed_user) VALUES (:request_user, :addressed_user)",
-                       request_user=user_id,
-                       addressed_user=addressed_user)
+                       request_user=user_id, addressed_user=addressed_user)
 
     else:
+        profile_info = db.execute("SELECT firstname, lastname, avatar FROM users "
+                                  "WHERE user = :profile_id", profile_id=profile_id)
 
-        user_info = db.execute("SELECT firstname, lastname, avatar FROM users WHERE user = :user_id", user_id=user_id)
+        friended_users = get_friends(profile_id)[0]
 
-    return render_template("/profile.html", user_info=user_info)
+        friend_button = get_friends(user_id)[0]
+        friend_id_list = [d['user'] for d in friend_button]
+
+        friend_check = 1 if int(profile_id) in friend_id_list else 0
+
+    return render_template("/profile.html/",
+                           profile_info=profile_info, profile_id=profile_id,
+                           user_id=str(user_id), friended_users=friended_users,
+                           friend_check=friend_check)
 
 
 @app.route("/settings", methods=["GET", "POST"])
@@ -352,27 +372,44 @@ def bet_page():
             "INNER JOIN users USING(user) "
             "WHERE invited = :bet_id OR joined = :bet_id", bet_id=bet_id)
 
-        return render_template("/bet-page.html/", bet=bet_info, user=user_id, people=people)
+        friended_users = get_friends(user_id)[0]
+
+        return render_template("/bet-page.html/", bet=bet_info, user=user_id, people=people, friends=friended_users)
 
 
-@app.route("/invite-friend")
+@app.route("/invite-friend", methods=["GET", "POST"])
 @login_required
 def invite_friend():
-    # Request arg with bet_id from url
-    bet_id = request.args.get('bet_id', None)
+    if request.method == 'POST':
 
-    # Save bet invites sent
-    invites = request.form.getlist("invited")
-    if invites[0] == '':
-        return redirect(f"/bet-page?bet_id={bet_id}")
+        # Request arg with bet_id from url
+        bet_id = request.args.get('bet_id', None)
 
-    else:
-        for invite in invites:
-            db.execute("INSERT INTO userBets (user, invited) VALUES (:user, :invited)",
-                       user=invite,
-                       invited=bet_id)
+        # Save bet invites sent
+        invited = request.form.getlist("invited")
 
-        return redirect(f"/bet-page?bet_id={bet_id}")
+        # Remove any duplicates in invited
+        invites = list(dict.fromkeys(invited))
+        invites = [int(i) for i in invites]
+
+        # Query for users that joined or were invited previously
+        on_bet = db.execute("SELECT user FROM userBets WHERE joined = :bet_id OR invited = :bet_id", bet_id=bet_id)
+        not_invite = [d['user'] for d in on_bet]
+
+        for invite in not_invite:
+            if invite in invites:
+                invites.remove(invite)
+
+        if len(invites) == 0:
+            return redirect(f"/bet-page?bet_id={bet_id}")
+
+        else:
+            for invite in invites:
+                db.execute("INSERT INTO userBets (user, invited) VALUES (:user, :invited)",
+                           user=invite,
+                           invited=bet_id)
+
+            return redirect(f"/bet-page?bet_id={bet_id}")
 
 
 @app.route("/delete-bet")
@@ -423,22 +460,10 @@ def friends():
     """Show list of friends"""
     user_id = session["user_id"]
 
-    inc_friend = db.execute(
-        "SELECT * FROM users WHERE user IN ("
-        "SELECT request_user FROM friends WHERE addressed_user = :user_id) ORDER BY firstname", user_id=user_id)
+    func_return = get_friends(user_id)
 
-    out_friend = db.execute(
-        "SELECT * FROM users WHERE user IN ("
-        "SELECT addressed_user FROM friends WHERE request_user = :user_id) ORDER BY firstname", user_id=user_id)
-
-    friend_requests = []
-    friended_users = []
-
-    for friend in inc_friend:
-        if friend in out_friend:
-            friended_users.append(friend)
-        else:
-            friend_requests.append(friend)
+    friended_users = func_return[0]
+    friend_requests = func_return[1]
 
     return render_template("friends.html", requests=friend_requests, friends=friended_users)
 

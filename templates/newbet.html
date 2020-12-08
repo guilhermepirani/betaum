@@ -50,7 +50,12 @@
             <div class="input-group-prepend">
                 <span class="input-group-text">@</span>
             </div>
-            <input type="text" class="form-control" placeholder="Username" name="invited">
+            <select class="browser-default custom-select" id="invited" name="invited">
+                <option selected style="display:none">Choose friend...</option>
+                {% for friend in friends %}
+                    <option value="{{ friend.user }}">{{ friend.firstname}} {{ friend.lastname }}</option>
+                {% endfor %}
+            </select>
             <span id="close" onclick="deleteField(event)">
                 <img src="../static/img/close.svg" alt="Remove" />
             </span>

@@ -1,4 +1,5 @@
 import os
+from cs50 import SQL
 import requests
 import urllib.parse
 
@@ -9,6 +10,8 @@ from werkzeug.utils import secure_filename
 
 ALLOWED_EXTENSIONS = ['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif']
 UPLOAD_FOLDER = "./static/uploads"
+
+db = SQL("sqlite:///betaum.db")
 
 
 def apology(message, code=400):
@@ -70,3 +73,26 @@ def delete_file(old_file):
     if os.path.exists(old_file):
         if not old_file == template:
             os.remove(old_file)
+
+
+def get_friends(user_id):
+    """Show list of friends"""
+
+    inc_friend = db.execute(
+        "SELECT * FROM users WHERE user IN ("
+        "SELECT request_user FROM friends WHERE addressed_user = :user_id) ORDER BY firstname", user_id=user_id)
+
+    out_friend = db.execute(
+        "SELECT * FROM users WHERE user IN ("
+        "SELECT addressed_user FROM friends WHERE request_user = :user_id) ORDER BY firstname", user_id=user_id)
+
+    friend_requests = []
+    friended_users = []
+
+    for friend in inc_friend:
+        if friend in out_friend:
+            friended_users.append(friend)
+        else:
+            friend_requests.append(friend)
+
+    return [friended_users, friend_requests]

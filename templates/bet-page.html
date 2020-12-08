@@ -29,10 +29,10 @@
             {% endif %}
         </div>
         <label>Invited</label>
-        <div class="avatar">
+        <div>
             {% for row in people %}
                 {% if row.invited == bet[0].id %}
-                    <a href="/profile/{{ row.user }}" data-toggle="tooltip" title="{{ row.firstname }} {{ row.lastname }}">
+                    <a data-toggle="tooltip" title="{{ row.firstname }} {{ row.lastname }}" name="friend" onclick="friendProfile({{ row.user }})">
                         <img class="avatar" src="{{ row.avatar }}" alt="Users' Avatars">
                     </a>
                 {% endif %}
@@ -42,7 +42,7 @@
         <div>
             {% for row in people %}
                 {% if row.joined == bet[0].id %}
-                    <a href="/profile/{{ row.user }}" data-toggle="tooltip" title="{{ row.firstname }} {{ row.lastname }}">
+                    <a data-toggle="tooltip" title="{{ row.firstname }} {{ row.lastname }}" name="friend" onclick="friendProfile({{ row.user }})">
                         <img class="avatar" src="{{ row.avatar }}" alt="Users' Avatars">
                     </a>
                 {% endif %}
@@ -113,12 +113,17 @@
                                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                             </div>
                             <div class="modal-body">
-                                <form action="/invite-friend">
+                                <form action="/invite-friend?bet_id={{ bet[0].id }}" method="POST">
                                     <div id="invite" class="input-group mb-3">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">@</span>
                                         </div>
-                                        <input type="text" class="form-control" placeholder="Username" name="invited">
+                                        <select class="browser-default custom-select" id="invited" name="invited">
+                                            <option selected style="display:none">Choose friend...</option>
+                                            {% for friend in friends %}
+                                                <option value="{{ friend.user }}">{{ friend.firstname}} {{ friend.lastname }}</option>
+                                            {% endfor %}
+                                        </select>
                                         <span id="close" onclick="deleteField(event)">
                                             <img src="../static/img/close.svg" alt="Remove" />
                                         </span>
@@ -127,7 +132,7 @@
                                         <img src="../static/img/plus.svg" alt="New Invite" />
                                     </button>
                                     <div class="modal-footer">
-                                        <button id="invite-btn" type="submit" class="btn btn-primary" data-dismiss="modal">Invite</button>
+                                        <button id="invite-btn" type="submit" class="btn btn-primary">Invite</button>
                                     </div>
                                 </form>
                             </div>

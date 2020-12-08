@@ -9,16 +9,27 @@
 {% endblock%}
 
 {% block main %}
+    <div class="profile-bg" style="background-image: url(static/uploads/bet-img-template.png)"></div>
     <div class="profile-avatar">
-        <img id="profile-avatar" src="static/uploads/avatars/{{ session.user_id }}.png">
+        <img id="profile-avatar" src="{{ profile_info[0].avatar }}">
+        <h3 class="username">{{ profile_info[0].firstname }} {{ profile_info[0].lastname }}</h3>
     </div>
-    <div class="profile-info">
-        <h4 class="username">Guilherme Pirani</h4>
-        <form action="/profile" method="POST">
-            <button class="btn btn-primary add-friend" type="submit" >Add Friend</button>
-        </form>
+    <div class="bg-crop">
+        {% if not user_id == profile_id %}
+            {% if friend_check == 0 %}
+                <form action="/profile" method="POST">
+                    <button class="btn btn-primary add-friend" type="submit" >Add Friend</button>
+                </form>
+            {% endif %}
+            {% if friend_check == 1 %}
+                <button class="btn done">Friend<img class="ok" src="static/img/ok.svg"></button>
+            {% endif %}
+        {% endif %}
+        {% if user_id == profile_id %}
+            <button class="btn done">Me!<img class="ok" src="static/img/ok.svg"></button>
+        {% endif %}
+        <hr>
     </div>
-    <hr>
     <div class="btn-group">
         <button class="btn btn-primary-group" data-toggle="modal" data-target="#friends-modal">Friends</button>
         <div class="modal" id="friends-modal">
@@ -29,31 +40,33 @@
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
                     <div class="modal-body">
-                        {% for friend in friended_users %}
-                            {{ friend }}
-                        {% endfor %}
+                        <table class="table table-striped">
+                            <tbody>
+                                {% for friend in friended_users %}
+                                    <tr class="w3-hover-blue">
+                                        <td><a class="" type="submit" name="friend" onclick="friendProfile({{ friend.user }})">
+                                            <img src="{{ friend.avatar }}" class="avatar" alt="avatar">
+                                        </a></td>
+                                        <td>{{ friend.firstname }}</td>
+                                        <td>{{ friend.lastname }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
-        <button class="btn btn-primary-group" data-toggle="modal" data-target="#achievements-modal">Achievements</button>
-            <div class="modal" id="achievements-modal">
-                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h4 class="modal-title">Achievements</h4>
-                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        </div>
-                        <div class="modal-body">
-                            SOON..
-                        </div>
-                    </div>
-                </div>
-            </div>
     </div>
     <div class="footer mt-5">
-        <form action="/settings">
-            <button class="btn btn-danger" type="submit">Settings</button>
-        </form>
+        {% if user_id == profile_id %}
+            <form action="/settings">
+                <button class="btn btn-danger" type="submit">Settings</button>
+            </form>
+        {% endif %}
     </div>
+{% endblock %}
+
+{% block script %}
+<script src="static/scripts/scripts.js"></script>
 {% endblock %}

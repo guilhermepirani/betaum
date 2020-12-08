@@ -25,7 +25,9 @@
             <tbody>
                 {% for friend in friends %}
                     <tr class="w3-hover-blue">
-                        <td><img src="{{ friend.avatar }}" class="avatar" alt="avatar"></td>
+                        <td><a class="" type="submit" name="friend" onclick="friendProfile({{ friend.user }})">
+                            <img src="{{ friend.avatar }}" class="avatar" alt="avatar">
+                        </a></td>
                         <td>{{ friend.firstname }}</td>
                         <td>{{ friend.lastname }}</td>
                     </tr>
@@ -45,7 +47,9 @@
             <tbody>
                 {% for user in requests %}
                     <tr class="w3-hover-blue">
-                        <td><img src="{{ user.avatar }}" class="avatar" alt="avatar"></td>
+                        <td><a class="" type="submit" name="friend" onclick="friendProfile({{ user.user }})">
+                            <img src="{{ user.avatar }}" class="avatar" alt="avatar">
+                        </a></td>
                         <td>{{ user.firstname }}</td>
                         <td>{{ user.lastname }}</td>
                     </tr>
@@ -55,4 +59,6 @@
     </div>
 {% endblock %}
 
-{% block script %}<script src="static/scripts/scripts.js"></script>{% endblock %}
+{% block script %}
+<script src="static/scripts/scripts.js"></script>
+{% endblock %}
