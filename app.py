@@ -42,12 +42,6 @@ Session(app)
 # Configure CS50 Library to use SQLite database
 db = SQL("sqlite:///betaum.db")
 
-"""
-# Make sure API key is set
-if not os.environ.get("API_KEY"):
-    raise RuntimeError("API_KEY not set")
-"""
-
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -261,6 +255,27 @@ def settings():
     return render_template("/settings.html", user_info=user_info)
 
 
+@app.route("/upload-profile-picture", methods=["POST"])
+@login_required
+def upload_profile_picture():
+    user_id = session["user_id"]
+
+    user_avatar = db.execute("SELECT avatar FROM users WHERE user = :user_id", user_id=user_id)
+
+    delete_old_avatar(user_avatar[0]['avatar'])
+    filepath = upload_avatar(user_id)
+
+    my_file = filepath
+    base = os.path.splitext(my_file)[0]
+    os.rename(my_file, base + '.png')
+
+    filepath = f'./static/uploads/avatars/{user_id}.png'
+
+    db.execute("UPDATE users SET avatar = :avatar WHERE user = :user_id", user_id=user_id, avatar=filepath)
+
+    return redirect(f"/profile?id={user_id}")
+
+
 @app.route("/change-password", methods=["POST"])
 @login_required
 def newPassword():
@@ -380,6 +395,7 @@ def bet_page():
 @app.route("/invite-friend", methods=["GET", "POST"])
 @login_required
 def invite_friend():
+    """Invites a friend to join bet"""
     if request.method == 'POST':
 
         # Request arg with bet_id from url
@@ -452,6 +468,28 @@ def join_bet():
         user_id=user_id)
 
     return redirect("/my-bets")
+
+
+@app.route("/add-friend")
+@login_required
+def add_friend():
+    """Invite profile owner as friend"""
+    user_id = session["user_id"]
+    profile_id = request.args.get('id', None)
+
+    # Check if a invite was sent
+    former_invite = db.execute("SELECT addressed_user "
+                               "FROM friends "
+                               "WHERE request_user = :user_id AND addressed_user = :profile_id",
+                               user_id=user_id, profile_id=profile_id)
+
+    if not len(former_invite) == 0:
+        return redirect(f"/profile?id={profile_id}")
+
+    db.execute("INSERT INTO friends (request_user, addressed_user) VALUES (:request_user, :addressed_user)",
+               request_user=user_id, addressed_user=profile_id)
+
+    return redirect(f"/profile?id={profile_id}")
 
 
 @app.route("/friends")

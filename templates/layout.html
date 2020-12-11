@@ -20,6 +20,7 @@
 
         <link href="/static/css/styles.css" rel="stylesheet">
         <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
         {% block style %}{% endblock %}
 
         <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
@@ -37,7 +38,7 @@
                 {% if session.user_id %}
                     <a id="plus" class="nav-link" href="/newbet"><img src="../static/img/plus.svg"></a>
                     <button aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler navbar-dark" data-target="#navbar" data-toggle="collapse" type="button">
-                        <img src="./static/uploads/avatars/{{ session.user_id }}.png">
+                        <img id="avatar" src="./static/uploads/avatars/{{ session.user_id }}.png">
                     </button>
                     <div class="collapse navbar-collapse" id="navbar">
                         <ul class="navbar-nav mr-auto mt-2">
@@ -46,7 +47,6 @@
                             <li class="nav-item"><a class="nav-link" href="/friends">Friends</a></li>
                         </ul>
                         <ul class="navbar-nav ml-auto mt-2">
-                            <li class="nav-item"><a class="nav-link" href="/profile">About</a></li>
                             <li class="nav-item"><a class="nav-link" href="/logout">Log Out</a></li>
                         </ul>
                     </div>
@@ -73,9 +73,6 @@
         </footer>
 
     </body>
-
-    {% block script %}
-    {% endblock %}
     <script>
     let body = document.getElementById('body');
     let mode = localStorage.getItem('mode');
@@ -86,4 +83,7 @@
     body.classList.add('dark-mode');
     }
     </script>
+    {% block script %}
+    {% endblock %}
+
 </html>

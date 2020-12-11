@@ -70,10 +70,18 @@ label {
     margin-bottom: 1rem;
 }
 
+.modal-body {
+    text-align: left;
+}
+
 .modal-footer {
     border: None;
     justify-content: space-between;
     margin-top: 1rem;
+}
+
+.input-group {
+    width: 100%!important;
 }
 
 #invite-btn {
@@ -114,4 +122,19 @@ span > img {
     margin-bottom: 1rem;
     margin-top: 1rem;
     border: none;
+}
+
+#about {
+    width: 100%;
+}
+
+@media screen and (min-width: 768px) {
+    .img-fluid {
+        max-width: 700px;
+        max-height: 420px;
+    }
+
+    body {
+        text-align: -webkit-center;
+    }
 }

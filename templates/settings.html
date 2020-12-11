@@ -1,25 +1,85 @@
 {% extends "layout.html" %}
 
+{% block style %}
+<link href="/static/css/settings.css" rel="stylesheet">
+
+{% endblock %}
+
 {% block title %}
     Settings
 {% endblock %}
 
 {% block main %}
+    <div class="btn-group">
+        <button class="btn btn-primary-group" data-toggle="modal" data-target="#picture-modal">Profile Picture</button>
+        <div class="modal" id="picture-modal">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Profile Picture</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="/upload-profile-picture" method="POST" enctype="multipart/form-data">
+                            <input type="file" name="file" onchange="preview()">
+                            <img id="frame" src="" class="preview-avatar d-none" style="border-radius: 50%" width="220px" height="220px"/>
+                            <button id="upload" type="submit" value="Upload" class="btn btn-primary d-none">Save Profile Image</button>
+                        </form>
+                        <div style="text-align: center">
+                            <h3>Info about your profile picture:</h3>
+                            <ul style="margin: 1rem">
+                                <li style="margin-bottom: 10px; text-align: left;">The image will be centered inside a 220x220px circle</li>
+                                <li style="margin-bottom: 10px; text-align: left;">Right now there's no possibility of editing, but you can preview before uploading</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+                <button class="btn btn-primary-group" data-toggle="modal" data-target="#password-modal">Change Password</button>
+        <div class="modal" id="password-modal">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Change Password</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="/change-password" method="post">
+                            <div class="form-group">
+                                <input autocomplete="off" autofocus class="form-control" name="email" placeholder="E-Mail" type="text">
+                            </div>
+                            <div class="form-group">
+                                <input class="form-control" name="old-password" placeholder="Old Password" type="password">
+                            </div>
+                             <div class="form-group">
+                                <input class="form-control" name="password" placeholder="New Password" type="password">
+                            </div>
+                            <div class="form-group">
+                                <input class="form-control" name="confirmation" placeholder="Confirm Password" type="password">
+                            </div>
+                            <button class="btn btn-danger" type="submit">Change Password</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <form action="/change-password" method="post">
-        <div class="form-group">
-            <input autocomplete="off" autofocus class="form-control" name="email" placeholder="E-Mail" type="text">
-        </div>
-        <div class="form-group">
-            <input class="form-control" name="old-password" placeholder="Old Password" type="password">
-        </div>
-         <div class="form-group">
-            <input class="form-control" name="password" placeholder="New Password" type="password">
-        </div>
-        <div class="form-group">
-            <input class="form-control" name="confirmation" placeholder="Confirm Password" type="password">
-        </div>
-        <button class="btn btn-danger" type="submit">Change Password</button>
-    </form>
 
+
+{% endblock %}
+
+
+{% block script %}
+<script>
+
+function preview() {
+    frame.src=URL.createObjectURL(event.target.files[0]);
+    frame.classList.remove("d-none");
+    upload.classList.remove("d-none");
+}
+
+
+</script>
 {% endblock %}

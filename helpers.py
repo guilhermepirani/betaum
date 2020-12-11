@@ -75,6 +75,33 @@ def delete_file(old_file):
             os.remove(old_file)
 
 
+def upload_avatar(user_id):
+    if request.method == 'POST':
+        # check if the post request has the file part
+        if 'file' not in request.files:
+            return "./static/img/user.svg"
+        file = request.files['file']
+
+        # submit a empty part without filename
+        if file.filename == '':
+            return "./static/img/user.svg"
+
+        # Save file
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file_extension = os.path.splitext(filename)
+            file.save(os.path.join('./static/uploads/avatars', str(user_id) + file_extension[1]))
+
+            return f"./static/uploads/avatars/{user_id}{file_extension[1]}"
+
+
+def delete_old_avatar(old_file):
+    template = "./static/img/user.svg"
+    if os.path.exists(old_file):
+        if not old_file == template:
+            os.remove(old_file)
+
+
 def get_friends(user_id):
     """Show list of friends"""
 

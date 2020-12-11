@@ -1,0 +1,35 @@
+.btn-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.btn-group button{
+
+    background-color: #2e944b;
+    border: 1px solid #086708;
+    color: white;
+    padding: 10px 24px;
+    cursor: pointer;
+    margin: 0!important;
+}
+
+.btn-group button:not(:last-child) {
+  border-bottom: none; /* Prevent double borders */
+}
+
+.btn-primary-group {
+    border-radius: 0;
+}
+
+/* Avatar Modal */
+
+.preview-avatar {
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    padding: 4px;
+    background: #2e944b;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 0 8px 3px #000;
+}

@@ -17,9 +17,9 @@
     <div class="bg-crop">
         {% if not user_id == profile_id %}
             {% if friend_check == 0 %}
-                <form action="/profile" method="POST">
-                    <button class="btn btn-primary add-friend" type="submit" >Add Friend</button>
-                </form>
+                    <button class="btn btn-primary add-friend" type="submit" onclick="friendUser({{ profile_id }})">
+                        Add Friend
+                    </button>
             {% endif %}
             {% if friend_check == 1 %}
                 <button class="btn done">Friend<img class="ok" src="static/img/ok.svg"></button>

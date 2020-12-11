@@ -1,4 +1,4 @@
-/* Top navbar */
+/* carousel */
 .navbar {
     background: #f8f9fa;
     border-bottom: 1px solid #dee2e6;
@@ -35,56 +35,9 @@ a.navbar-brand {
 }
 
 
-/* Feed bar */
-#feed-bar {
-    display: flex;
-    justify-content: space-between;
-
-    margin: 2rem 1rem 2rem 3rem;
-
-    align-items: center;
-    font-weight: bold;
-}
-
-.input-group {
-    width: 50%;
-}
-
-.btn-outline-secondary {
-    padding: 5px;
-}
-
-
-/* Cards */
-.card {
-    display: flex;
-    margin: 1rem;
-    background: #333;
-    color: #eee;
-    text-align: left;
-}
-
-.card h5 {
-    color: white;
-}
-
-#card-avatar {
-    position: absolute;
-}
-
-.name {
-    padding-bottom: 2rem;
-    margin-left: 3.5rem;
-    text-align: left;
-    line-height: 0.5;
-    font-weight: 500;
-}
-
-.card-title {
-    font-weight: 700;
-}
-
-div.card-body img {
-    margin: 0;
-    padding: 0;
+@media screen and (min-width: 768px) {
+    .carousel-inner img {
+        max-width: 700px;
+        max-height: 420px;
+    }
 }

@@ -122,5 +122,11 @@
 // Redirecting to clicked user's profile
 
     function friendProfile(user) {
-        window.location.replace(`/profile?id=${user}`);
+        window.location.assign(`/profile?id=${user}`);
+    }
+
+// Add profile owner as friend
+
+    function friendUser(user) {
+        window.location.assign(`/add-friend?id=${user}`);
     }
