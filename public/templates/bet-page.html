@@ -22,10 +22,10 @@
     </div>
     <div class="bet-info">
         <div class="address">
-            {% if not 'Online' in bet[0].address %}
-                <label>Address: </label><p>{{ bet[0].address }}</p>
-            {% else %}
+            {% if bet[0].address == 'Online' %}
                 <label>Running Online</label>
+            {% else %}
+                <label>Address: </label><p>{{ bet[0].address }}</p>
             {% endif %}
         </div>
         <label>Invited</label>
@@ -49,7 +49,7 @@
             {% endfor %}
         </div>
         <div class="about">
-            {% if bet[0].about != None %}
+            {% if bet[0].about != None and bet[0].about != ''%}
                 <label>About: </label>
                 <p class="about">{{ bet[0].about }}</p>
             {% endif %}
@@ -88,9 +88,10 @@
                                         <textarea class="form-control" id="about" name="about" maxlength="300">{{ bet[0].about }}</textarea>
                                     </div>
                                     <label>Add image (Optional):</label>
-                                    <div class="custom-file">
-                                        <input type="file" class="custom-file-input" id="customFile" name="file">
-                                        <label class="custom-file-label" for="customFile" style="text-align: left;">Choose image</label>
+                                    <div>
+                                        <input type="file" name="file" onchange="preview()" style="overflow-x: hidden;">
+                                        <img id="frame" class="img-fluid d-none" src="" width="1100" height="500"
+                                             style="max-width: 100%; max-height: 180px;"/>
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" onclick="confirmDelete()" class="btn btn-danger" data-dismiss="modal">Delete Bet</button>
@@ -162,6 +163,14 @@
             window.location.replace("/join-bet?bet_id={{ bet[0].id }}");
             }
         }
+
+        function preview() {
+            frame.src=URL.createObjectURL(event.target.files[0]);
+            frame.classList.remove("d-none");
+        }
+
+        var today = new Date().toISOString().split('T')[0];
+        document.getElementsByName("date")[0].setAttribute('min', today);
     </script>
     <script src="../static/scripts/scripts.js"></script>
 {% endblock %}

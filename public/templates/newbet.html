@@ -22,12 +22,12 @@
             <div class="valid-feedback">Valid.</div>
             <div class="invalid-feedback">Please fill out this field.</div>
         </div>
-        <label for="date">Date:</label>
+        <label for="date">Date: <span>Leave it blank for *Today*</span></label>
         <div class="form-group">
             <input type="date" class="form-control" id="date" placeholder="" name="date">
         </div>
         <div class="form-group">
-            <label for="place">Address:</label>
+            <label for="place">Address: <span>Leave it blank for Online</span></label>
             <input type="text" class="form-control" id="place" placeholder="To participate or collect prize" maxlength="60" name="place">
         </div>
         <label for="about">About: <span>Max 300 characters</span></label>
@@ -37,7 +37,7 @@
         <label>Prize format:</label>
         <div class="form-check">
             <label class="form-check-label">
-                <input type="radio" class="form-check-input" name="optradio" value="Winner takes all">Winner takes all
+                <input type="radio" class="form-check-input" checked="" name="optradio" value="Winner takes all">Winner takes all
             </label>
         </div>
         <div class="form-check">
@@ -86,10 +86,13 @@
 {% endblock %}
 
 {% block script %}
-<script>
-    function preview() {
-        frame.src=URL.createObjectURL(event.target.files[0]);
-        frame.classList.remove("d-none");
-    }
-</script>
+    <script>
+        function preview() {
+            frame.src=URL.createObjectURL(event.target.files[0]);
+            frame.classList.remove("d-none");
+        }
+
+        var today = new Date().toISOString().split('T')[0];
+        document.getElementsByName("date")[0].setAttribute('min', today);
+    </script>
 {% endblock %}

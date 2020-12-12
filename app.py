@@ -7,7 +7,7 @@ from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
-from datetime import datetime
+from datetime import date
 
 from helpers import *
 
@@ -41,6 +41,23 @@ Session(app)
 
 # Configure CS50 Library to use SQLite database
 db = SQL("sqlite:///betaum.db")
+
+
+@app.route("/")
+@login_required
+def index():
+    # Get user id
+    user_id = session["user_id"]
+    today = str(date.today())
+
+    bets = db.execute("SELECT * FROM bets WHERE id IN (SELECT joined FROM userBets WHERE user = ?) "
+                      "ORDER BY date LIMIT 3", user_id)
+    bets.insert(0, {'date': today, 'image': './static/uploads/bet-index-template.png'})
+
+    return render_template("index.html", bets=bets, today=today)
+
+
+# /------------------------------------------ USER RELATED ROUTES ----------------------------------------------------/
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -123,94 +140,6 @@ def login():
         return render_template("login.html")
 
 
-@app.route("/")
-@login_required
-def index():
-
-    # Get user id
-    user_id = session["user_id"]
-
-    # Template for users without bets
-    if db.execute("SELECT COUNT(user) FROM userBets WHERE user = ?", user_id) == [{'COUNT(user)': 0}]:
-        bets = [{'image': './static/uploads/bet-index-template.png'}]
-
-    # Query for bets
-    else:
-        bets = db.execute("SELECT * FROM bets WHERE id IN (SELECT joined FROM userBets WHERE user = ?) "
-                          "ORDER BY date LIMIT 3", user_id)
-
-    return render_template("index.html", bets=bets)
-
-
-@app.route("/newbet", methods=["GET", "POST"])
-@login_required
-def newbet():
-    """Register new friendly bet"""
-    if request.method == "POST":
-
-        # Get user id
-        user_id = session["user_id"]
-
-        # Ensure title was submitted
-        if not request.form.get("bname"):
-            return apology("must provide a Title", 403)
-
-        # Ensure entry requirement was submitted
-        elif not request.form.get("entry"):
-            return apology("must provide an entry requirement", 403)
-
-        else:
-
-            # Insert bet into db
-            db.execute(
-                "INSERT INTO bets (creator, title, requirements, date, address, about, format, image) "
-                "VALUES (:creator, :title, :requirements, :date, :address, :about, :format, :image)",
-                creator=user_id,
-                title=request.form.get("bname"),
-                requirements=request.form.get("entry"),
-                date=request.form.get("date"),
-                address=request.form.get("place"),
-                about=None if request.form.get("about") == '' else request.form.get("about"),
-                format=request.form.get("optradio"),
-                image=upload_file())
-
-            # Get biggest(equals latest) bet id
-            bet = db.execute("SELECT id FROM bets ORDER BY id DESC LIMIT 1")[0]["id"]
-
-            # Creator joins bet
-            db.execute(
-                "INSERT INTO userBets (user, joined)"
-                "VALUES (:user, :joined)",
-                user=user_id,
-                joined=bet)
-
-            # Save bet invites sent
-            invites = request.form.getlist("invited")
-
-            # Remove any duplicates in invites
-            invites = list(dict.fromkeys(invites))
-
-            if len(invites) == 0:
-                return redirect("/")
-
-            else:
-                for invite in invites:
-                    db.execute("INSERT INTO userBets (user, invited) VALUES (:user, :invited)",
-                               user=invite,
-                               invited=bet)
-
-                return redirect("/")
-
-    else:
-        user_id = session["user_id"]
-
-        func_return = get_friends(user_id)
-
-        friended_users = func_return[0]
-
-        return render_template("/newbet.html", friends=friended_users)
-
-
 @app.route("/profile", methods=["GET", "POST"])
 @login_required
 def profile():
@@ -269,7 +198,7 @@ def upload_profile_picture():
     base = os.path.splitext(my_file)[0]
     os.rename(my_file, base + '.png')
 
-    filepath = f'./static/uploads/avatars/{user_id}.png'
+    filepath = f'public/static/uploads/avatars/{user_id}.png'
 
     db.execute("UPDATE users SET avatar = :avatar WHERE user = :user_id", user_id=user_id, avatar=filepath)
 
@@ -307,6 +236,125 @@ def newPassword():
     return redirect("/")
 
 
+@app.route("/add-friend")
+@login_required
+def add_friend():
+    """Invite profile owner as friend"""
+    user_id = session["user_id"]
+    profile_id = request.args.get('id', None)
+
+    # Check if a invite was sent
+    former_invite = db.execute("SELECT addressed_user "
+                               "FROM friends "
+                               "WHERE request_user = :user_id AND addressed_user = :profile_id",
+                               user_id=user_id, profile_id=profile_id)
+
+    if not len(former_invite) == 0:
+        return redirect(f"/profile?id={profile_id}")
+
+    db.execute("INSERT INTO friends (request_user, addressed_user) VALUES (:request_user, :addressed_user)",
+               request_user=user_id, addressed_user=profile_id)
+
+    return redirect(f"/profile?id={profile_id}")
+
+
+@app.route("/friends")
+@login_required
+def friends():
+    """Show list of friends"""
+    user_id = session["user_id"]
+
+    func_return = get_friends(user_id)
+
+    friended_users = func_return[0]
+    friend_requests = func_return[1]
+
+    return render_template("friends.html", requests=friend_requests, friends=friended_users)
+
+
+@app.route("/logout")
+def logout():
+    """Log user out"""
+
+    # Forget any user_id
+    session.clear()
+
+    # Redirect user to login form
+    return redirect("/")
+
+
+# /-------------------------------------------- BET RELATED ROUTES ----------------------------------------------------/
+
+
+@app.route("/newbet", methods=["GET", "POST"])
+@login_required
+def newbet():
+    """Register new friendly bet"""
+    if request.method == "POST":
+
+        # Get user id
+        user_id = session["user_id"]
+
+        # Ensure title was submitted
+        if not request.form.get("bname"):
+            return apology("must provide a Title", 403)
+
+        # Ensure entry requirement was submitted
+        elif not request.form.get("entry"):
+            return apology("must provide an entry requirement", 403)
+
+        else:
+
+            # Insert bet into db
+            db.execute(
+                "INSERT INTO bets (creator, title, requirements, date, address, about, format, image) "
+                "VALUES (:creator, :title, :requirements, :date, :address, :about, :format, :image)",
+                creator=user_id,
+                title=request.form.get("bname"),
+                requirements=request.form.get("entry"),
+                date=date.today() if request.form.get("date") == '' else request.form.get("date"),
+                address="Online" if request.form.get("place") == "" else request.form.get("place"),
+                about=None if request.form.get("about") == "" else request.form.get("about"),
+                format=request.form.get("optradio"),
+                image=upload_file())
+
+            # Get biggest(equals latest) bet id
+            bet = db.execute("SELECT id FROM bets ORDER BY id DESC LIMIT 1")[0]["id"]
+
+            # Creator joins bet
+            db.execute(
+                "INSERT INTO userBets (user, joined)"
+                "VALUES (:user, :joined)",
+                user=user_id,
+                joined=bet)
+
+            # Save bet invites sent
+            invites = request.form.getlist("invited")
+
+            # Remove any duplicates in invites
+            invites = list(dict.fromkeys(invites))
+
+            if len(invites) == 0 or invites[0] == "Choose friend...":
+                return redirect("/")
+
+            else:
+                for invite in invites:
+                    db.execute("INSERT INTO userBets (user, invited) VALUES (:user, :invited)",
+                               user=invite,
+                               invited=bet)
+
+                return redirect("/")
+
+    else:
+        user_id = session["user_id"]
+
+        func_return = get_friends(user_id)
+
+        friended_users = func_return[0]
+
+        return render_template("/newbet.html", friends=friended_users)
+
+
 @app.route("/my-bets", methods=["GET", "POST"])
 @login_required
 def my_bets():
@@ -324,13 +372,14 @@ def my_bets():
 
     # Query for invited bets
     inv_bets = db.execute("SELECT * FROM bets WHERE id IN (SELECT invited FROM userBets WHERE user = ?) "
-                          "ORDER BY date", user_id)
+                          "ORDER BY date DESC", user_id)
 
     if not bets:
         return render_template("/my-bets.html")
 
     else:
-        return render_template("/my-bets.html", bets=bets, inv_bets=inv_bets)
+        today = str(date.today())
+        return render_template("/my-bets.html", bets=bets, inv_bets=inv_bets, today=today)
 
 
 @app.route("/bet-page", methods=["GET", "POST"])
@@ -365,7 +414,7 @@ def bet_page():
             requirements=request.form.get("entry"),
             date=request.form.get("date"),
             address=request.form.get("place"),
-            about=None if 'None' else request.form.get("about"),
+            about=None if '' else request.form.get("about"),
             image=bet_img[0]['image'] if file.filename == '' else upload_file(),
             bet_id=bet_id)
 
@@ -416,7 +465,7 @@ def invite_friend():
             if invite in invites:
                 invites.remove(invite)
 
-        if len(invites) == 0:
+        if len(invites) == 0 or invites[0] == "Choose friend...":
             return redirect(f"/bet-page?bet_id={bet_id}")
 
         else:
@@ -469,53 +518,9 @@ def join_bet():
 
     return redirect("/my-bets")
 
+# /--------------------------------------------------------------------------------------------------------------------/
 
-@app.route("/add-friend")
-@login_required
-def add_friend():
-    """Invite profile owner as friend"""
-    user_id = session["user_id"]
-    profile_id = request.args.get('id', None)
-
-    # Check if a invite was sent
-    former_invite = db.execute("SELECT addressed_user "
-                               "FROM friends "
-                               "WHERE request_user = :user_id AND addressed_user = :profile_id",
-                               user_id=user_id, profile_id=profile_id)
-
-    if not len(former_invite) == 0:
-        return redirect(f"/profile?id={profile_id}")
-
-    db.execute("INSERT INTO friends (request_user, addressed_user) VALUES (:request_user, :addressed_user)",
-               request_user=user_id, addressed_user=profile_id)
-
-    return redirect(f"/profile?id={profile_id}")
-
-
-@app.route("/friends")
-@login_required
-def friends():
-    """Show list of friends"""
-    user_id = session["user_id"]
-
-    func_return = get_friends(user_id)
-
-    friended_users = func_return[0]
-    friend_requests = func_return[1]
-
-    return render_template("friends.html", requests=friend_requests, friends=friended_users)
-
-
-@app.route("/logout")
-def logout():
-    """Log user out"""
-
-    # Forget any user_id
-    session.clear()
-
-    # Redirect user to login form
-    return redirect("/")
-
+# Error handlers
 
 def errorHandler(e):
     """Handle error"""
@@ -524,6 +529,5 @@ def errorHandler(e):
     return apology(e.name, e.code)
 
 
-# Listen for errors
 for code in default_exceptions:
     app.errorhandler(code)(errorHandler)
