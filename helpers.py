@@ -90,7 +90,7 @@ def upload_avatar(user_id):
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file_extension = os.path.splitext(filename)
-            file.save(os.path.join('public/static/uploads/avatars', str(user_id) + file_extension[1]))
+            file.save(os.path.join('static/uploads/avatars', str(user_id) + file_extension[1]))
 
             return f"./static/uploads/avatars/{user_id}{file_extension[1]}"
 
