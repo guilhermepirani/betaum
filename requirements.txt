@@ -1,4 +1,5 @@
 cs50~=5.1.0
+gunicorn~=
 Flask~=1.1.2
 Flask-Session
 requests~=2.25.0
