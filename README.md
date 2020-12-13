@@ -12,10 +12,6 @@
 
 Betaum is a platform where friends can quickly set up bets, keep track of them and challange others. 
 
-=======
->>>>>>> db71fdbd193b0da4aa9ab04ec58ab3d56f73e7ca
-<h2 align="center">Used Technologies</h2>
-
 - [Flask](https://flask.palletsprojects.com)
 - [SQLite](https://www.sqlite.org/index.html)
 - [HTML](https://html.com/)
@@ -24,7 +20,6 @@ Betaum is a platform where friends can quickly set up bets, keep track of them a
 - [Jinja](https://jinja.palletsprojects.com/)
 - [JavaScript](https://www.javascript.com/)
 
-<<<<<<< HEAD
 ### Login & Index:
 
 <div style="text-align: justify">
@@ -35,7 +30,7 @@ Your profile picture on the top right opens a nav menu to the other pages.
     
 <img src="https://github.com/guilhermepirani/betaum/blob/main/static/samples/login%20page.png" width="25%" height="25%" alt="Login page"/>
 <img src="https://github.com/guilhermepirani/betaum/blob/main/static/samples/Index.png" width="25%" height="25%" alt="index page"/>
-<img src="https://github.com/guilhermepirani/betaum/blob/main/static/samples/navw%20menu.png" width="25%" height="25%" alt="nav menu"/>
+<img src="https://github.com/guilhermepirani/betaum/blob/main/static/samples/nav%20menu.png" width="25%" height="25%" alt="nav menu"/>
 </div>
 
 ### Profiles & Settings
