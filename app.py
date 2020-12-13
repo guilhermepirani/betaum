@@ -198,7 +198,7 @@ def upload_profile_picture():
     base = os.path.splitext(my_file)[0]
     os.rename(my_file, base + '.png')
 
-    filepath = f'public/static/uploads/avatars/{user_id}.png'
+    filepath = f'static/uploads/avatars/{user_id}.png'
 
     db.execute("UPDATE users SET avatar = :avatar WHERE user = :user_id", user_id=user_id, avatar=filepath)
 

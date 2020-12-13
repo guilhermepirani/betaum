@@ -17,14 +17,24 @@
             {% endfor %}
         </ul>
         <div class="carousel-inner">
-            <div class="carousel-item active">
-                <img src="{{bets[0].image}}" width="1100" height="500">
-                <div class="carousel-caption">
-                    <a href="/bet-page?bet_id={{ bets[0].id }}"><h3>{{ bets[0].title }}</h3></a>
-                    <p>{{ bets[0].format }}</p>
+            {% if not bets[1] %}
+                <div class="carousel-item active">
+                    <img src="{{bets[0].image}}" width="1100" height="500">
+                    <div class="carousel-caption">
+                        <a href="/bet-page?bet_id={{ bets[0].id }}"><h3>{{ bets[0].title }}</h3></a>
+                        <p>{{ bets[0].format }}</p>
+                    </div>
                 </div>
-            </div>
-            {% for bet in bets[1:] %}
+            {% else %}
+                <div class="carousel-item active">
+                    <img src="{{bets[1].image}}" width="1100" height="500">
+                    <div class="carousel-caption">
+                        <a href="/bet-page?bet_id={{ bets[0].id }}"><h3>{{ bets[0].title }}</h3></a>
+                        <p>{{ bets[0].format }}</p>
+                    </div>
+                </div>
+            {% endif %}
+            {% for bet in bets[2:] %}
                 {% if bet.date > today %}
                     <div class="carousel-item">
                         <img src="{{bet.image}}" width="1100" height="500">
