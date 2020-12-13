@@ -7,10 +7,13 @@
 
 > This website was develloped as my final project for HarvardX CS50 class. 
 
+<<<<<<< HEAD
 ## :dollar: **Betaum**
 
 Betaum is a platform where friends can quickly set up bets, keep track of them and challange others. 
 
+=======
+>>>>>>> db71fdbd193b0da4aa9ab04ec58ab3d56f73e7ca
 <h2 align="center">Used Technologies</h2>
 
 - [Flask](https://flask.palletsprojects.com)
@@ -21,6 +24,7 @@ Betaum is a platform where friends can quickly set up bets, keep track of them a
 - [Jinja](https://jinja.palletsprojects.com/)
 - [JavaScript](https://www.javascript.com/)
 
+<<<<<<< HEAD
 ### Login & Index:
 
 <div style="text-align: justify">
