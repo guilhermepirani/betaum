@@ -522,6 +522,7 @@ def join_bet():
 
 # Error handlers
 
+
 def errorHandler(e):
     """Handle error"""
     if not isinstance(e, HTTPException):
