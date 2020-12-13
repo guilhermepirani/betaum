@@ -2,12 +2,10 @@
     CS50 Final Project
 </h1>
 
-
 ###### [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 > This website was develloped as my final project for HarvardX CS50 class. 
 
-<<<<<<< HEAD
 ## :dollar: **Betaum**
 
 Betaum is a platform where friends can quickly set up bets, keep track of them and challange others. 
