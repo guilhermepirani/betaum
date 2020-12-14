@@ -4,11 +4,13 @@
 
 ###### [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-> This website was develloped as my final project for HarvardX CS50 class. 
+> This website was developed as my final project for HarvardX CS50 class. 
 
 ## :dollar: **Betaum**
 
 Betaum is a platform where friends can quickly set up bets, keep track of them and challange others. 
+
+<h2 align="center">Used Technologies</h2>
 
 - [Flask](https://flask.palletsprojects.com)
 - [SQLite](https://www.sqlite.org/index.html)
